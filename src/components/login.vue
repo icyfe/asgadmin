@@ -4,53 +4,65 @@
       <a-layout-header>
         <div class="logo">
           <span slot="title">
-            <a-icon type="user" />
+            <a-icon type="user"/>
             <span>爱省购后台管理系统</span>
           </span>
-
         </div>
       </a-layout-header>
       <a-layout-content style="padding: 0 50px">
-        <a-alert :message="error" type="error" showIcon v-show="show" />
+        <a-alert :message="error" type="error" showIcon v-show="show"/>
         <a-breadcrumb style="margin: 16px 0">
           <!-- <a-breadcrumb-item>登入</a-breadcrumb-item> -->
         </a-breadcrumb>
         <div class="login-container">
           <h3>欢迎登入</h3>
           <!-- <a-input placeholder="请输入用户名" />
-                    <a-input type="password" placeholder="请输入密码" /> -->
-          <a-form layout='vertical' @submit="handleSubmit" :autoFormCreate="(form)=>{this.form = form}">
+          <a-input type="password" placeholder="请输入密码" />-->
+          <a-form
+            layout="vertical"
+            @submit="handleSubmit"
+            :autoFormCreate="(form)=>{this.form = form}"
+          >
             <template v-if="form">
-              <a-form-item :validateStatus="userNameError() ? 'error' : ''" :help="userNameError() || ''" fieldDecoratorId="user" :fieldDecoratorOptions="{rules: [{ type:'string',required: true, message: '请输入正确的用户名!' }]}">
-                <a-input placeholder='Username'>
-                  <a-icon slot="prefix" type='user' style="color:rgba(0,0,0,.25)" />
+              <a-form-item
+                :validateStatus="userNameError() ? 'error' : ''"
+                :help="userNameError() || ''"
+                fieldDecoratorId="user"
+                :fieldDecoratorOptions="{rules: [{ type:'string',required: true, message: '请输入正确的用户名!' }]}"
+              >
+                <a-input placeholder="Username">
+                  <a-icon slot="prefix" type="user" style="color:rgba(0,0,0,.25)"/>
                 </a-input>
               </a-form-item>
-              <a-form-item :validateStatus="passwordError() ? 'error' : ''" :help="passwordError() || ''" fieldDecoratorId="password" :fieldDecoratorOptions="{rules: [{ required: true, message: 'Please input your Password!' }]}">
-                <a-input type='password' placeholder='Password'>
-                  <a-icon slot="prefix" type='lock' style="color:rgba(0,0,0,.25)" />
+              <a-form-item
+                :validateStatus="passwordError() ? 'error' : ''"
+                :help="passwordError() || ''"
+                fieldDecoratorId="password"
+                :fieldDecoratorOptions="{rules: [{ required: true, message: 'Please input your Password!' }]}"
+              >
+                <a-input type="password" placeholder="Password">
+                  <a-icon slot="prefix" type="lock" style="color:rgba(0,0,0,.25)"/>
                 </a-input>
                 <p class="errtxt" v-show="isError">账号或密码错误</p>
               </a-form-item>
               <a-form-item>
-                <a-button type='primary' htmlType='submit' :disabled="hasErrors(form.getFieldsError())">
-                  登入
-                </a-button>
+                <a-button
+                  type="primary"
+                  htmlType="submit"
+                  :disabled="hasErrors(form.getFieldsError())"
+                >登入</a-button>
               </a-form-item>
             </template>
           </a-form>
         </div>
-
       </a-layout-content>
-      <a-layout-footer class="footer-container">
-        爱省购 ©2018 Created by HXDZ
-      </a-layout-footer>
+      <a-layout-footer class="footer-container">爱省购 ©2018 Created by HXDZ</a-layout-footer>
     </a-layout>
   </a-layout>
 </template>
 <script>
 import { postLogin } from "@/api/login";
- 
+
 function hasErrors(fieldsError) {
   return Object.keys(fieldsError).some(field => fieldsError[field]);
 }
@@ -64,6 +76,7 @@ export default {
       error: ""
     };
   },
+  created() {},
   mounted() {
     this.$nextTick(() => {
       // To disabled submit button at the beginning.
@@ -72,6 +85,8 @@ export default {
     // login();
   },
   methods: {
+    //页面初始化
+    init() {},
     // Only show error after a field is touched.
     userNameError() {
       const { getFieldError, isFieldTouched } = this.form;
@@ -97,10 +112,10 @@ export default {
               let data = res.data;
               if (data.status == "200") {
                 sessionStorage.setItem("user", JSON.stringify(data.user));
-                this.$router.push({path: "/"});
-              }else{
+                this.$router.push({ path: "/" });
+              } else {
                 that.error = data.msg;
-                that.show= true;
+                that.show = true;
               }
             });
           } else {

@@ -6,6 +6,9 @@ import Myuser from '@/components/view/myuser'
 import Login from '@/components/login'
 import UpCounpons from '@/components/view/upCounpons'
 import Home from '@/components/view/home'
+import OperatorDetail from '@/components/view/OperatorDetail'
+import OperatorUser from '@/components/view/OperatorUser'
+import OperatorItemDetail from '@/components/view/OperatorItemDetail'
 Vue.use(Router)
 
 export default new Router({
@@ -30,6 +33,18 @@ export default new Router({
         {
           path:'/upcounpons',
           component:UpCounpons
+        },
+        {
+          path:'/OperatorDetail',
+          component:OperatorDetail
+        },
+        {
+          path:'/OperatorUser',
+          component:OperatorUser
+        },
+        {
+          path:'/OperatorItemDetail',
+          component:OperatorItemDetail
         }
       ]
     },

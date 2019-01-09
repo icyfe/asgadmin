@@ -22,7 +22,7 @@
                     <a-icon type="desktop" />
                     <span>Option 2</span>
                 </a-menu-item> -->
-        <a-sub-menu key="sub1">
+        <a-sub-menu key="sub2">
           <span slot="title">
             <a-icon type="user" /><span>会员管理</span></span>
           <a-menu-item
@@ -35,9 +35,21 @@
           >业绩看板</a-menu-item>
           <!-- <a-menu-item key="5">Alex</a-menu-item> -->
         </a-sub-menu>
-        <a-sub-menu key="sub1">
+        <a-sub-menu key="sub3">
           <span slot="title">
-            <a-icon type="user" /><span>运营商管理</span></span>
+            <a-icon type="team" /><span>运营商管理</span></span>
+            <a-menu-item
+            key="Operator1"
+            @click="jump('/OperatorDetail')"
+          >运营商信息</a-menu-item>
+            <a-menu-item
+            key="Operator2"
+            @click="jump('/OperatorUser')"
+          >我的会员</a-menu-item>
+          <a-menu-item
+            key="Operator3"
+            @click="jump('/OperatorItemDetail')"
+          >商品信息</a-menu-item>
         </a-sub-menu>
         <!-- <a-sub-menu key="sub2">
                     <span slot="title">

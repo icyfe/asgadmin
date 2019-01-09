@@ -1,11 +1,10 @@
 import axios from 'axios'
-
+const BASE_URL = 'http://localhost:3302/'
 class Http {
     post(url, data) {
         return new Promise((resolve, reject) => {
-            axios.post(url, {
-                data,
-            }, {
+            axios.post(`${BASE_URL}${url}`,
+                data, {
                     headers: {
                         'content-type': 'application/json',
                     }
