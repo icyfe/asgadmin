@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>
+        <%=title%>
+    </title>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/css/style.css">
+ 
+</head>
+
+<body>
+    <div class="container">
+        <div class="page-header">
+        </div>
+        <div>
+            <ul class="nav my-nav">
+                <% for(let i = 0; i<navdata.length;i++){%>
+                <% if(type == navdata[i].type){%>
+                <li class="active">
+                    <a href="?type=<%=navdata[i].type%>">
+                        <%=navdata[i].type%></a></li>
+                <% } else { %>
+                <li><a href="?type=<%=navdata[i].type%>">
+                        <%=navdata[i].type%></a></li>
+                <%}%>
+                <%}%>
+            </ul>
+        </div>
+        <div class="yhq-wrap container">
+            <div class="row">
+                <% for(let i = 0; i<yhqlist.length;i++){%>
+                <div class="col-sm-6 col-md-4" style="height:653px;">
+                    <div class="thumbnail">
+                        <img class="lazy" width="100%" height="400" src="<%=yhqlist[i].pict_url%>">
+                        <div class="caption">
+                            <div class="price">
+                                <div class="price-title">
+                                    <a class="sm-ft">￥</a>
+                                    <a class="lg-ft">
+                                        <%=yhqlist[i].zk_final_price%></a>
+                                    <a class="sm-ft">券后</a>
+                                    <a class="line-ft">￥
+                                        <%=parseInt(yhqlist[i].zk_final_price)+parseInt(yhqlist[i].coupon_info)%></a>
+                                </div>
+                                <div class="price-img">
+                                    <a class="sm-ft">券</a>
+                                    <a class="sm-ft">￥
+                                        <%=yhqlist[i].coupon_info%></a>
+                                </div>
+                            </div>
+                            <p>
+                                <%=yhqlist[i].title%>
+                            </p>
+                            <p>销量：
+                                <span class="sale-num">
+                                    <%=yhqlist[i].volume%></span>
+                            </p>
+                            <p>
+                                <a href="<%=yhqlist[i].coupon_click_url%>" class="btn btn-red" role="button">立即领券</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <%}%>
+            </div>
+            <nav aria-label="Page navigation" style="text-align:center">
+                <ul class="pagination">
+                    <%if((start / 30)!=0){%>
+                    <li class="">
+                        <a href="?type=<%=type%>&page=<%=(start /30 )-1%>" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <%}else{%>
+                    <li class="disabled ">
+                        <a aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <%}%>
+                    <% for(let i=0; i<pages; i++ ){%>
+                    <%if((start / 30) ==i){%>
+                    <li class="page-acitve"><a href="?type=<%=type%>&page=<%=i%>">
+                            <%=i+1%> </a></li>
+                    <%}else{%>
+                    <li class=""><a href="?type=<%=type%>&page=<%=i%>">
+                            <%=i+1%> </a></li>
+                    <%}%>
+                    <%}%>
+                    <%if((start / 30)!=pages -1){%>
+                    <li>
+                        <a href="?type=<%=type%>&page=<%=(start / 30)+1%>" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <%}else{%>
+                    <li class="disabled">
+                        <a aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <%}%>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div class="footer-container">
+        <p>爱省购，买之前先领券，乐享优惠！</p>
+        <p>© CopyRight 2018 爱省购 www.taoquan77.com</p>
+        <p>浙ICP备17041003号-1</p>
+        <P>爱省购版权所有</P>
+    </div>
+
+    <script src="/static/js/jquery-3.3.1.min.js"></script>
+    
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

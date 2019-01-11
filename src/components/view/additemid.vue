@@ -39,9 +39,15 @@
     >
       <a-input id="volume"/>
     </a-form-item>
-    <!-- <div class="clearfix">
+    <a-form-item
+      label="商品主图"
+      :labelCol="{ span: 5 }"
+      :wrapperCol="{ span: 12 }"
+      fieldDecoratorId="pict_url"
+      :fieldDecoratorOptions="{rules: []}"
+    >
       <a-upload
-      label="库存数"
+        label="商品主图"
         action="//jsonplaceholder.typicode.com/posts/"
         listType="picture-card"
         :fileList="fileList"
@@ -56,19 +62,14 @@
       <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
         <img alt="example" style="width: 100%" :src="previewImage">
       </a-modal>
-    </div> -->
-
+    </a-form-item>
     <a-form-item :wrapperCol="{ span: 12, offset: 5 }">
       <a-button type="primary" htmlType="submit">新增</a-button>
     </a-form-item>
   </a-form>
 </template>
 <script>
-
-import {
-  operatoritemdetailinsert,
-  
-} from "@/api/operatoritemdetail";
+import { operatoritemdetailinsert } from "@/api/operatoritemdetail";
 export default {
   data() {
     return {
@@ -95,13 +96,13 @@ export default {
       this.form.validateFields((err, values) => {
         if (!err) {
           //console.log("Received values of form: ", values);
-          values.seller_id ="mm";
-          values.shop_title="chl店";
+          values.seller_id = "mm";
+          values.shop_title = "chl店";
 
           let ret = operatoritemdetailinsert(values);
         }
       });
-    },
+    }
     // handleSelectChange(value) {
     //   console.log(value);
     //   this.form.setFieldsValue({
