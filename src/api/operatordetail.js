@@ -13,4 +13,7 @@ function operatordetailDelete(data) {
     return http.post(`api/post/pc/operatordetail-delete`, data);
 }
 
-export { operatordetailSelect,operatordetailUpdate,operatordetailDelete}
+function pidtable(data) {
+    return http.post(`api/post/pc/pidtable`, data);
+}
+export { operatordetailSelect,operatordetailUpdate,operatordetailDelete,pidtable}

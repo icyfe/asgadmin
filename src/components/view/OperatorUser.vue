@@ -12,7 +12,7 @@
 <script>
 const columns = [
   {
-    title: "供应商PID",
+    title: "PID",
     dataIndex: "PID",
     //sorter: true,
     width: "20%",
@@ -32,7 +32,7 @@ const columns = [
     dataIndex: "InviteCode"
   }
 ];
-
+import {userSelect} from "@/api/user"
 export default {
   mounted() {
     this.fetch();
@@ -60,30 +60,22 @@ export default {
       });
     },
     fetch(params = {}) {
-      console.log("params:", params);
+     console.log("params:", params);
       this.loading = true;
-      this.$http
-        .get(
-          "https://www.easy-mock.com/mock/5c32b507b2bf494db1c0de5f/example/OperatorUser",
-          {
-            params: {
-              results: 10,
-              ...params
-            }
-          }
-        )
-        .then(res => {
-          // console.log('请求到的数据',res)
-          const pagination = { ...this.pagination };
-          // Read total count from server
-          // pagination.total = data.totalCount;
-          pagination.total = res.data.results.length;
+      let ret = userSelect({OperatorCode:'mm'});
 
-          this.loading = false;
-          this.data = res.data.results;
-          this.pagination = pagination;
-          console.log("请求到的数据", this.data);
-        });
+      ret.then(res => {
+        console.log("请求到的数据", res);
+        const pagination = { ...this.pagination };
+        // Read total count from server
+        // pagination.total = data.totalCount;
+        pagination.total = res.data.results.length;
+
+        this.loading = false;
+        this.data = res.data.results;
+        this.pagination = pagination;
+        console.log("请求到的数据", this.data);
+      });
     }
   }
 };

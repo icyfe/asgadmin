@@ -1,59 +1,87 @@
 <template>
-<div>
-    <a-table class="table" :columns="columns" :dataSource="data" :pagination="pagination" :loading="loading" @change="handleTableChange">
-        
-        <!-- <template slot="name" slot-scope="name">
+  <div>
+    <a-table
+      class="table"
+      :columns="columns"
+      :dataSource="data"
+      :pagination="pagination"
+      :loading="loading"
+      @change="handleTableChange"
+    >
+      <!-- <template slot="name" slot-scope="name">
             {{name.first}} {{name.last}}
-        </template> -->
+      </template>-->
+      <template slot="operation" slot-scope="text, record,index">
+        <a-popconfirm
+          v-if="data.length"
+          title="Sure to delete?"
+          @confirm="() => onDelete(record.num_iid,index)"
+        >
+          <a href="javascript:;">删除</a>
+        </a-popconfirm>
+      </template>
     </a-table>
     <a-form-item :wrapperCol="{ span: 12, offset: 5 }">
-      <a-button type='primary' htmlType='submit'>
-        更新
-      </a-button>
+      <a-button type="primary" htmlType="submit" @click="jump('/additemid')">新增</a-button>
     </a-form-item>
-</div>
+  </div>
 </template>
 <script>
 const columns = [
   {
     title: "运营商ID",
-    dataIndex: "seller_id",
+    width: "8%",
+    dataIndex: "seller_id"
     //sorter: true,
     //width: "20%",
     //scopedSlots: { customRender: "PID" }
   },
   {
     title: "运营商名称",
-    dataIndex: "shop_title",
+    width: "9%",
+    dataIndex: "shop_title"
   },
   {
     title: "商品ID",
+    width: "7%",
     dataIndex: "num_iid"
   },
   {
     title: "商品名称",
+    width: "8%",
     dataIndex: "title"
-  }
-  ,
+  },
   {
     title: "价格",
-    dataIndex: "zk_final_price",
+    width: "6%",
+    dataIndex: "zk_final_price"
     //width: "20%"
   },
   {
     title: "库存数",
+    width: "7%",
     dataIndex: "volume"
   },
   {
     title: "商品主图",
+    width: "20%",
     dataIndex: "pict_url"
   },
   {
     title: "商品小图",
     dataIndex: "small_images"
+  },
+  {
+    title: "操作",
+    dataIndex: "operation",
+    width: "7%",
+    scopedSlots: { customRender: "operation" }
   }
 ];
-
+import {
+  operatoritemdetail,
+  operatoritemdetaildelete
+} from "@/api/operatoritemdetail";
 export default {
   mounted() {
     this.fetch();
@@ -81,37 +109,45 @@ export default {
       });
     },
     fetch(params = {}) {
-      console.log("params:", params);
       this.loading = true;
-      this.$http
-        .get(
-          "https://www.easy-mock.com/mock/5c32b507b2bf494db1c0de5f/example/OperatorItemDetail",
-          {
-            params: {
-              results: 10,
-              ...params
-            }
-          }
-        )
-        .then(res => {
-          // console.log('请求到的数据',res)
-          const pagination = { ...this.pagination };
-          // Read total count from server
-          // pagination.total = data.totalCount;
-          pagination.total = res.data.results.length;
+      let ret = operatoritemdetail({ OperatorCode: "mm" });
 
-          this.loading = false;
-          this.data = res.data.results;
-          this.pagination = pagination;
-          console.log("请求到的数据", this.data);
-        });
+      ret.then(res => {
+        const pagination = { ...this.pagination };
+
+        pagination.total = res.data.results.length;
+
+        this.loading = false;
+        this.data = res.data.results;
+        this.pagination = pagination;
+      });
+    },
+    jump(url) {
+      if (url == "/login") {
+        sessionStorage.clear();
+
+        this.$router.push(url);
+        return;
+      }
+      this.$router.push(url);
+    },
+    onDelete(key, index) {
+      const newData = [...this.data];
+      console.log("key", key);
+      let ret = operatoritemdetaildelte(newData[index]);
+      ret.then(res => {
+        //console.log("请求到的数据save", res);
+      });
+      const newData1 = newData.filter(item => item.num_iid !== key);
+      console.log("newData1", newData1);
+      this.data = newData.filter(item => item.num_iid !== key);
     }
   }
 };
 </script>
 <style  scoped lang="less">
-.table  {
-    color:red!important;
+.table {
+  color: red !important;
 }
 </style>
  

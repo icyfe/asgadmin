@@ -9,6 +9,7 @@ import Home from '@/components/view/home'
 import OperatorDetail from '@/components/view/OperatorDetail'
 import OperatorUser from '@/components/view/OperatorUser'
 import OperatorItemDetail from '@/components/view/OperatorItemDetail'
+import additemid from '@/components/view/additemid'
 Vue.use(Router)
 
 export default new Router({
@@ -45,6 +46,11 @@ export default new Router({
         {
           path:'/OperatorItemDetail',
           component:OperatorItemDetail
+        }
+        ,
+        {
+          path:'/additemid',
+          component:additemid
         }
       ]
     },

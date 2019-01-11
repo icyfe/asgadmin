@@ -27,6 +27,7 @@
         </div>
       </template>
       <template slot="operation" slot-scope="text, record, index">
+        <!-- <editable-cell :text="text" @change="onCellChange(record.key, 'operation')"/> -->
         <div class="editable-row-operations">
           <span v-if="record.editable">
             <a @click="() => save(record.key,index)">保存</a>
@@ -37,28 +38,28 @@
           <span v-else>
             <a @click="() => edit(record.key,index)">修改</a>
             <!-- <a @click="() => onDelete(record.key)">刪除</a> -->
-            <a-popconfirm title="确定要删除?" @confirm="() => onDelete(record.key,index)">
+            <a-popconfirm title="确定要删除?" @confirm="() => onDelete(record.OperatorPID,index)">
               <a>删除</a>
             </a-popconfirm>
-             <a @click="() => handleAdd(record.key,index)">新增</a>
+            <a @click="() => handleAdd(record.key,index)">新增</a>
           </span>
         </div>
       </template>
     </a-table>
 
-    <a-form-item :wrapperCol="{ span: 12, offset: 5 }">
+    <!-- <a-form-item :wrapperCol="{ span: 12, offset: 5 }">
       <a-button type="primary" htmlType="submit">更新</a-button>
-    </a-form-item>
+    </a-form-item>-->
   </div>
 </template>
 <script>
 const columns = [
   {
-    title: "商铺PID",
+    title: "运营商PID",
     dataIndex: "OperatorPID",
     sorter: true,
-    width: "20%",
-    scopedSlots: { customRender: "OperatorPID" }
+    width: "20%"
+    // scopedSlots: { customRender: "OperatorPID" }
   },
   {
     title: "运营商名称",
@@ -80,7 +81,8 @@ const columns = [
 import {
   operatordetailSelect,
   operatordetailUpdate,
-  operatordetailDelete
+  operatordetailDelete,
+  pidtable
 } from "@/api/operatordetail";
 export default {
   mounted() {
@@ -126,7 +128,7 @@ export default {
         console.log("请求到的数据", this.data);
       });
     },
-    handleChange(value, key, column,index) {
+    handleChange(value, key, column, index) {
       const newData = [...this.data];
       const target = newData.filter(item => key === item.key)[index];
       if (target) {
@@ -134,7 +136,7 @@ export default {
         this.data = newData;
       }
     },
-    edit(key,index) {
+    edit(key, index) {
       const newData = [...this.data];
       const target = newData.filter(item => key === item.key)[index];
       console.log("target", target);
@@ -143,7 +145,7 @@ export default {
         this.data = newData;
       }
     },
-    save(key,index) {
+    save(key, index) {
       const newData = [...this.data];
 
       console.log("newData", newData[index]);
@@ -159,52 +161,71 @@ export default {
         this.cacheData = newData.map(item => ({ ...item }));
       }
     },
-    cancel(key,index) {
+    cancel(key, index) {
       const newData = [...this.data];
       const target = newData.filter(item => key === item.key)[index];
-      console.log('target',target)
-      console.log('cacheData',cacheData)
+      console.log("target", target);
+      console.log("key", key);
+      console.log("index", index);
       if (target) {
-        Object.assign(
-          target,
-          this.cacheData.filter(item => key === item.key)[0]
-        );
+        // Object.assign(
+        //   target,
+        //   this.cacheData.filter(item => key === item.key)[0]
+        // );
         delete target.editable;
         this.data = newData;
       }
     },
-    onDelete(key,index) {
+    onDelete(key, index) {
       const newData = [...this.data];
       console.log("key", key);
-      console.log("newData", newData);
       let ret = operatordetailDelete(newData[index]);
       ret.then(res => {
-        console.log("请求到的数据save", res);
+        //console.log("请求到的数据save", res);
       });
-      const dataSource = [...this.data];
-      this.data = newData;
+      const newData1 =  newData.filter(item => item.OperatorPID !== key);
+      console.log("newData1",newData1);
+      this.data = newData.filter(item => item.OperatorPID !== key);
     },
-     handleAdd () {
-      const { data } = this
-      const count = data.length
-      const newData = {
-        OperatorPID:'',
-        OperatorName: '',
-        OperatorCode: '',
-      }
-      this.data = [...data, newData]
+    handleAdd() {
+      const { data } = this;
+      const count = data.length;
+      let pid = "";
+      let ret = pidtable({});
+      ret.then(res => {
+        // console.log("请求到的数据", res.data.results[0].pid);
+        if (res.data.results.length > 0) {
+          pid = res.data.results[0].pid;
+          console.log("pid", pid);
+          const newData = {
+            OperatorPID: pid,
+            OperatorName: "",
+            OperatorCode: "",
+            editable: true
+          };
+          this.data = [...data, newData];
 
-      const newData1 = [...this.data];
-      console.log("newData1",newData1)
-      console.log("count",count)
-      const target = newData1.filter(item => count === item.key)[count];
-      console.log("target", target);
-      if (target) {
-        target.editable = true;
-        this.data = newData1;
+          const newData1 = [...this.data];
+          const target = newData1.filter(item => count === item.key)[count];
+          if (target) {
+            target.editable = true;
+            this.data = newData1;
+          }
+        }else{
+          this.$message.info('没有可用的PID');
+        }
+      });
+    },
+    onCellChange (key, dataIndex) {
+      return (value) => {
+        const dataSource = [...this.data]
+        const target = dataSource.find(item => item.key === key)
+        if (target) {
+          target[dataIndex] = value
+          this.data = dataSource
+        }
       }
     },
-
   }
 };
 </script>
