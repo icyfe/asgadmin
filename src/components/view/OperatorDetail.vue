@@ -12,11 +12,11 @@
             {{name.first}} {{name.last}}
       </template>-->
       <template
-        v-for="col in ['OperatorPID', 'OperatorName', 'OperatorCode']"
+        v-for="(col, index) in ['OperatorPID', 'OperatorName', 'OperatorCode']"
         :slot="col"
         slot-scope="text, record, index"
       >
-        <div>
+        <div :key="index">
           <a-input
             v-if="record.editable"
             style="margin: -5px 0"
@@ -26,19 +26,28 @@
           <template v-else>{{text}}</template>
         </div>
       </template>
-      <template slot="operation" slot-scope="text, record, index">
+      <template
+        slot="operation"
+        slot-scope="text, record, index"
+      >
         <!-- <editable-cell :text="text" @change="onCellChange(record.key, 'operation')"/> -->
         <div class="editable-row-operations">
           <span v-if="record.editable">
             <a @click="() => save(record.key,index)">保存</a>
-            <a-popconfirm title="确定要取消?" @confirm="() => cancel(record.key,index)">
+            <a-popconfirm
+              title="确定要取消?"
+              @confirm="() => cancel(record.key)"
+            >
               <a>取消</a>
             </a-popconfirm>
           </span>
           <span v-else>
-            <a @click="() => edit(record.key,index)">修改</a>
+            <a @click="() => edit(record.key)">修改</a>
             <!-- <a @click="() => onDelete(record.key)">刪除</a> -->
-            <a-popconfirm title="确定要删除?" @confirm="() => onDelete(record.OperatorPID,index)">
+            <a-popconfirm
+              title="确定要删除?"
+              @confirm="() => onDelete(record.OperatorPID,index)"
+            >
               <a>删除</a>
             </a-popconfirm>
             <a @click="() => handleAdd(record.key,index)">新增</a>
@@ -124,22 +133,25 @@ export default {
 
         this.loading = false;
         this.data = res.data.results;
+        this.data.forEach((item, index) => {
+          item.key = index.toString();
+        });
+        this.cacheData = this.data.map(item => ({ ...item }));
         this.pagination = pagination;
         console.log("请求到的数据", this.data);
       });
     },
     handleChange(value, key, column, index) {
       const newData = [...this.data];
-      const target = newData.filter(item => key === item.key)[index];
+      const target = newData.filter(item => key === item.key)[0];
       if (target) {
         target[column] = value;
         this.data = newData;
       }
     },
-    edit(key, index) {
+    edit(key) {
       const newData = [...this.data];
-      const target = newData.filter(item => key === item.key)[index];
-      console.log("target", target);
+      const target = newData.filter(item => key === item.key)[0];
       if (target) {
         target.editable = true;
         this.data = newData;
@@ -147,7 +159,6 @@ export default {
     },
     save(key, index) {
       const newData = [...this.data];
-
       console.log("newData", newData[index]);
       let ret = operatordetailUpdate(newData[index]);
       ret.then(res => {
@@ -161,17 +172,14 @@ export default {
         this.cacheData = newData.map(item => ({ ...item }));
       }
     },
-    cancel(key, index) {
+    cancel(key) {
       const newData = [...this.data];
-      const target = newData.filter(item => key === item.key)[index];
-      console.log("target", target);
-      console.log("key", key);
-      console.log("index", index);
+      const target = newData.filter(item => key === item.key)[0];
       if (target) {
-        // Object.assign(
-        //   target,
-        //   this.cacheData.filter(item => key === item.key)[0]
-        // );
+        Object.assign(
+          target,
+          this.cacheData.filter(item => key === item.key)[0]
+        );
         delete target.editable;
         this.data = newData;
       }
@@ -183,8 +191,8 @@ export default {
       ret.then(res => {
         //console.log("请求到的数据save", res);
       });
-      const newData1 =  newData.filter(item => item.OperatorPID !== key);
-      console.log("newData1",newData1);
+      const newData1 = newData.filter(item => item.OperatorPID !== key);
+      console.log("newData1", newData1);
       this.data = newData.filter(item => item.OperatorPID !== key);
     },
     handleAdd() {
@@ -211,21 +219,21 @@ export default {
             target.editable = true;
             this.data = newData1;
           }
-        }else{
-          this.$message.info('没有可用的PID');
+        } else {
+          this.$message.info("没有可用的PID");
         }
       });
     },
-    onCellChange (key, dataIndex) {
-      return (value) => {
-        const dataSource = [...this.data]
-        const target = dataSource.find(item => item.key === key)
+    onCellChange(key, dataIndex) {
+      return value => {
+        const dataSource = [...this.data];
+        const target = dataSource.find(item => item.key === key);
         if (target) {
-          target[dataIndex] = value
-          this.data = dataSource
+          target[dataIndex] = value;
+          this.data = dataSource;
         }
-      }
-    },
+      };
+    }
   }
 };
 </script>
