@@ -4,6 +4,7 @@
       class="table"
       :columns="columns"
       :dataSource="data"
+      :scroll="{ x: 2300 }"
       :pagination="pagination"
       :loading="loading"
       @change="handleTableChange"
@@ -19,6 +20,12 @@
         >
           <a href="javascript:;">删除</a>
         </a-popconfirm>
+      </template>
+      <template slot="pict_url" slot-scope="text, record,index">
+        <img
+          style="width: 100%"
+           src="http://localhost:3302/uploads/avatar/微信图片_20181114082828.png"
+        >
       </template>
     </a-table>
     <a-form-item :wrapperCol="{ span: 12, offset: 5 }">
@@ -65,7 +72,8 @@ const columns = [
   {
     title: "商品主图",
     width: "20%",
-    dataIndex: "pict_url"
+    dataIndex: "pict_url",
+    scopedSlots: { customRender: "pict_url" }
   },
   {
     title: "商品小图",
@@ -91,6 +99,7 @@ export default {
       data: [],
       pagination: {},
       loading: false,
+      previewImage: "",
       columns
     };
   },
@@ -119,6 +128,7 @@ export default {
 
         this.loading = false;
         this.data = res.data.results;
+        
         this.pagination = pagination;
       });
     },
@@ -134,7 +144,7 @@ export default {
     onDelete(key, index) {
       const newData = [...this.data];
       console.log("key", key);
-      let ret = operatoritemdetaildelte(newData[index]);
+      let ret = operatoritemdetaildelete(newData[index]);
       ret.then(res => {
         //console.log("请求到的数据save", res);
       });

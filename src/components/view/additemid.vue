@@ -59,7 +59,7 @@
         @preview="handlePreview"
         @change="handleChange"
       >
-        <div v-if="fileList.length < 5">
+        <div v-if="fileList.length < 2">
           <a-icon type="plus" />
           <div class="ant-upload-text">上传图片</div>
         </div>
@@ -80,11 +80,11 @@
       label="商品小图"
       :labelCol="{ span: 5 }"
       :wrapperCol="{ span: 12 }"
-      fieldDecoratorId="pict_url1"
+      fieldDecoratorId="small_images"
       :fieldDecoratorOptions="{rules: []}"
     >
       <a-upload
-        label="商品主图"
+        label="商品小图"
         action="//localhost:3302/api/post/upload"
         listType="picture-card"
         @preview="handlePreview1"
@@ -144,7 +144,7 @@ export default {
     },
     handleChange({ fileList }) {
       this.fileList = fileList;
-      //console.log("fileList", fileList);
+      console.log("fileList", fileList);
     },
     handleChange1({ fileList }) {
       this.fileList1 = fileList;
@@ -159,6 +159,7 @@ export default {
           values.shop_title = "chl店";
 
           let ret = operatoritemdetailinsert(values);
+          console.log("values", values);
         }
       });
     }
