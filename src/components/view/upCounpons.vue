@@ -3,7 +3,7 @@
     <a-form-item label='adzone_id' :labelCol="{ span: 5 }" :wrapperCol="{ span: 12 }" fieldDecoratorId=" " :fieldDecoratorOptions="{rules: [{type:'string',pattern: /^[1-9]+$/, required: true, message: '请输入合法的adzone_id!' }]}">
       <a-input />
     </a-form-item>
-    <a-form-item label='类别' :labelCol="{ span: 5 }" :wrapperCol="{ span: 12 }" fieldDecoratorId="gender" :fieldDecoratorOptions="{rules: [{ required: true, message: 'Please select your gender!' }]}">
+    <a-form-item label='类别' :labelCol="{ span: 5 }" :wrapperCol="{ span: 12 }" fieldDecoratorId="gender" :fieldDecoratorOptions="{rules: [{ required: true, message: '请选择更新的类别!' }]}">
       <a-select placeholder='请选择类别'>
         <a-select-option value='male'>男装</a-select-option>
         <a-select-option value='female'>女装</a-select-option>

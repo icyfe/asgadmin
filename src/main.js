@@ -5,15 +5,16 @@ import App from './App'
 import router from './router'
 import AntUi from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
-import axios from 'axios' 
-
+import { message } from 'ant-design-vue'
+import store from './store'
 Vue.use(AntUi)
 Vue.config.productionTip = false
-Vue.prototype.$http = axios
+Vue.prototype.$message = message
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

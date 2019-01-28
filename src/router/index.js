@@ -1,15 +1,19 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
 import Index from '@/components/index'
-import Myuser from '@/components/view/myuser'
+import MemberList from '@/components/view/member-list'
 import Login from '@/components/login'
 import UpCounpons from '@/components/view/upCounpons'
 import Home from '@/components/view/home'
-import OperatorDetail from '@/components/view/OperatorDetail'
-import OperatorUser from '@/components/view/OperatorUser'
-import OperatorItemDetail from '@/components/view/OperatorItemDetail'
+import OperatorDetail from '@/components/view/operator-detail'
+import OperatorUser from '@/components/view/operator-user'
+import OperatorItemDetail from '@/components/view/operator-itemdetail'
 import additemid from '@/components/view/additemid'
+import ChangePsw from '@/components/view/changepsw'
+import User from '@/components/view/user'
+import OrderList from '@/components/view/orderlist'
+import Commission from '@/components/view/commission'
+import CashDrawal from '@/components/view/cash-drawal'
 Vue.use(Router)
 
 export default new Router({
@@ -17,46 +21,62 @@ export default new Router({
     {
       path: '/',
       component: Index,
-      redirect:'/home',
-      children:[
+      redirect: '/home',
+      children: [
         {
-          path:'/home',
-          component:Home
+          path: '/home',
+          component: Home
         },
         {
-          path:'/hello',
-          component:HelloWorld, 
+          path: '/member-list',
+          component: MemberList
         },
         {
-          path:'/myuser',
-          component:Myuser
+          path: '/upcounpons',
+          component: UpCounpons
         },
         {
-          path:'/upcounpons',
-          component:UpCounpons
+          path: '/operator-detail',
+          component: OperatorDetail
         },
         {
-          path:'/OperatorDetail',
-          component:OperatorDetail
+          path: '/operator-user',
+          component: OperatorUser
         },
         {
-          path:'/OperatorUser',
-          component:OperatorUser
-        },
-        {
-          path:'/OperatorItemDetail',
-          component:OperatorItemDetail
+          path: '/operator-itemdetail',
+          component: OperatorItemDetail
         }
         ,
         {
-          path:'/additemid',
-          component:additemid
+          path: '/additemid',
+          component: additemid
+        },
+        {
+          path: '/changepsw',
+          component: ChangePsw
+        },
+        {
+          path: '/user',
+          component: User
+        },
+        {
+          path: '/orderlist',
+          component: OrderList
+        },
+        {
+          path: '/commission',
+          component: Commission
+        },
+        {
+          path: '/cash-drawal',
+          component: CashDrawal
         }
       ]
     },
     {
-      path:'/login',
-      component:Login,
+      path: '/login',
+      component: Login,
     }
   ]
 })

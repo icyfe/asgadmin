@@ -1,7 +1,10 @@
-const { Http } = require('../util/http');
-const http = new Http();
-import {BASE_URL} from '@/config/config'
+import request from '@/util/request'
+ 
 function postLogin(data) {
-    return http.post(`${BASE_URL}/api/post/pc/login`, data);
+    return request({
+        url:'api/post/user/pc/login',
+        method:'post',
+        data
+    })
 }
 export { postLogin }

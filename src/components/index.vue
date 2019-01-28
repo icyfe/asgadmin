@@ -8,7 +8,7 @@
       v-model="collapsed"
     >
       <div class="logo">
-        <img src="../image/avatar.jpg" /> <a v-show="!collapsed">{{user.name}}</a>
+        <img :src="avatar" /> <a v-show="!collapsed">{{name}}</a>
       </div>
       <a-menu
         theme="dark"
@@ -22,75 +22,96 @@
                     <a-icon type="desktop" />
                     <span>Option 2</span>
                 </a-menu-item> -->
-        <a-sub-menu key="sub2">
+        <a-sub-menu key="sub1">
           <span slot="title">
             <a-icon type="user" /><span>会员管理</span></span>
           <a-menu-item
-            key="3"
-            @click="jump('/myuser')"
+            key="1"
+            @click="jump('/member-list')"
           >我的代理</a-menu-item>
-          <a-menu-item
-            key="4"
-            @click="jump('/hello')"
-          >业绩看板</a-menu-item>
-          <!-- <a-menu-item key="5">Alex</a-menu-item> -->
         </a-sub-menu>
-        <a-sub-menu key="sub3">
+        <a-sub-menu key="sub2">
           <span slot="title">
             <a-icon type="team" /><span>运营商管理</span></span>
-            <a-menu-item
+          <a-menu-item
             key="Operator1"
-            @click="jump('/OperatorDetail')"
+            @click="jump('/operator-detail')"
           >运营商信息</a-menu-item>
-            <a-menu-item
+          <a-menu-item
             key="Operator2"
-            @click="jump('/OperatorUser')"
+            @click="jump('/operator-user')"
           >我的会员</a-menu-item>
           <a-menu-item
             key="Operator3"
-            @click="jump('/OperatorItemDetail')"
+            @click="jump('/operator-itemdetail')"
           >商品信息</a-menu-item>
+          <!-- <a-menu-item
+            key="Operator5"
+            @click="jump('/operator-itemdetail')"
+          >新闻发布</a-menu-item> -->
         </a-sub-menu>
-        <!-- <a-sub-menu key="sub2">
-                    <span slot="title">
-                        <a-icon type="team" /><span>Team</span></span>
-                    <a-menu-item key="6">Team 1</a-menu-item>
-                    <a-menu-item key="8">Team 2</a-menu-item>
-                </a-sub-menu> -->
+        <a-sub-menu key="sub3">
+          <span slot="title">
+            <a-icon type="file-text" />
+            <span>订单管理</span>
+          </span>
+          <a-menu-item
+            key="6"
+            @click="jump('/orderlist')"
+          >订单列表</a-menu-item>
+          <a-menu-item key="8">订单查询</a-menu-item>
+        </a-sub-menu>
+        <a-sub-menu key="sub4">
+          <span slot="title">
+            <a-icon type="pay-circle" /><span>提现管理</span></span>
+          <a-menu-item
+            key="9"
+            @click="jump('/cash-drawal')"
+          >提现审核</a-menu-item>
+
+        </a-sub-menu>
         <a-menu-item
-          key="9"
-          @click="jump('/upCounpons')"
+          key="11"
+          @click="jump('/commission')"
         >
           <a-icon type="file" />
-          <span>管理优惠券</span>
+          <span>佣金比例调整</span>
         </a-menu-item>
       </a-menu>
     </a-layout-sider>
+
     <a-layout>
       <a-layout-header style="background: #001529; padding: 0">
         <a-row>
           <a-col :span="21"></a-col>
           <a-col :span="3">
             <div class="logo">
-              <img src="../image/avatar.jpg" />
+              <img :src="avatar" />
               <a-dropdown :trigger="['click']">
                 <a
                   class="ant-dropdown-link"
                   href="#"
                 >
-                  {{user.name}}
+                  {{name}}
                   <a-icon type="down" />
                 </a>
                 <a-menu slot="overlay">
-                  <a-menu-item
-                    key="1"
-                    @click="test()"
-                  >
-                    <a href="#">个人中心</a>
-                  </a-menu-item>
-                  <a-menu-item key="1">
-                    <a href="#">修改密码</a>
-                  </a-menu-item>
+                  <router-link to='/user'>
+                    <a-menu-item
+                      key="2"
+                      class="ant-dropdown-menu-item"
+                    >
+                      个人中心
+                    </a-menu-item>
+                  </router-link>
+                  <router-link to='/changepsw'>
+                    <a-menu-item
+                      key="1"
+                      class="ant-dropdown-menu-item"
+                    >
+                      修改密码
+                    </a-menu-item>
+                  </router-link>
                   <a-menu-item
                     @click="jump('/login')"
                     key="0"
@@ -124,25 +145,34 @@
 
 </template>
 <script>
-import { index } from "@/api/";
-import axios from "axios";
-
+import { mapGetters } from "vuex";
 export default {
+  computed: {
+    ...mapGetters(["name", "phone", "avatar"])
+  },
   data() {
     return {
-      collapsed: false,
-      user: ""
+      collapsed: false
     };
   },
   created() {
-    // this.user = sessionStorage.getItem("user");
-    // this.user = JSON.parse(this.user);
-    // if (!this.user) {
-    //   this.$router.push("/login");
-    // }
-    // console.log(this.user);
+    this.init();
   },
   methods: {
+    init() {
+      this.$store.dispatch("CheckLogin").then(res => {
+        console.log("isLogin", res);
+        if (!res) {
+          this.$router.push("/login");
+        }
+      });
+      // this.user = sessionStorage.getItem("user");
+      // this.user = JSON.parse(this.user);
+      // if (!this.user) {
+      //   this.$router.push("/login");
+      // }
+      // console.log("realace", this.user);
+    },
     jump(url) {
       if (url == "/login") {
         sessionStorage.clear();
@@ -151,44 +181,6 @@ export default {
         return;
       }
       this.$router.push(url);
-    },
-    test() {
-      let url = `http://testapi.ky-express.com/kyeopenapi/WaybillListDetails`;
-      let params = {
-        uuid: "59255024",
-        key: "BE11F4F2D154DEBEC2350B2548F83E11"
-      };
-      let str = "";
-      for (let key in params) {
-        str += key + params[key];
-      }
-      console.log("参数:", str);
-      let ssort = str.split("");
-      ssort = ssort.sort().join("");
-      console.log("排序：", ssort);
-      let md = md5.md5("5C6117646C820B675DD734E88F02411D" + ssort);
-      console.log("加密后的：", md);
-      axios
-        .post(
-          url,
-          {
-            uuid: "59255024",
-            key: "BE11F4F2D154DEBEC2350B2548F83E11"
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              "access-token": md,
-              key: "5C6117646C820B675DD734E88F02411D"
-            }
-          }
-        )
-        .then(res => {
-          console.log("SuccessMsg:", res);
-        })
-        .catch(e => {
-          console.log("ErrorMsg:", e);
-        });
     }
   }
 };
@@ -219,5 +211,8 @@ export default {
 }
 .link a {
   color: #fff !important;
+}
+.paddingL {
+  padding-left: 45px;
 }
 </style>

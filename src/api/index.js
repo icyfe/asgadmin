@@ -1,13 +1,10 @@
-const { Http } = require('../util/http');
-const http = new Http();
-import {BASE_URL} from '@/config/config'
+import request from '@/util/request'
 function getIndex(data) {
-    return http.post(`${BASE_URL}/api/`
-        , data)
-        .then(function (res) { 
-        })
-}
-function posttest(){
-    
+
+    return request({
+        url: '/article/list',
+        method: 'get',
+        params: query
+    })
 }
 export { getIndex }

@@ -1,16 +1,24 @@
 <template>
-  <a-layout id="components-layout-demo-top" class="layout">
+  <a-layout
+    id="components-layout-demo-top"
+    class="layout"
+  >
     <a-layout class="layout-bg">
       <a-layout-header>
         <div class="logo">
           <span slot="title">
-            <a-icon type="user"/>
+            <a-icon type="user" />
             <span>爱省购后台管理系统</span>
           </span>
         </div>
       </a-layout-header>
       <a-layout-content style="padding: 0 50px">
-        <a-alert :message="error" type="error" showIcon v-show="show"/>
+        <a-alert
+          :message="error"
+          type="error"
+          showIcon
+          v-show="show"
+        />
         <a-breadcrumb style="margin: 16px 0">
           <!-- <a-breadcrumb-item>登入</a-breadcrumb-item> -->
         </a-breadcrumb>
@@ -31,7 +39,11 @@
                 :fieldDecoratorOptions="{rules: [{ type:'string',required: true, message: '请输入正确的用户名!' }]}"
               >
                 <a-input placeholder="Username">
-                  <a-icon slot="prefix" type="user" style="color:rgba(0,0,0,.25)"/>
+                  <a-icon
+                    slot="prefix"
+                    type="user"
+                    style="color:rgba(0,0,0,.25)"
+                  />
                 </a-input>
               </a-form-item>
               <a-form-item
@@ -40,10 +52,20 @@
                 fieldDecoratorId="password"
                 :fieldDecoratorOptions="{rules: [{ required: true, message: 'Please input your Password!' }]}"
               >
-                <a-input type="password" placeholder="Password">
-                  <a-icon slot="prefix" type="lock" style="color:rgba(0,0,0,.25)"/>
+                <a-input
+                  type="password"
+                  placeholder="Password"
+                >
+                  <a-icon
+                    slot="prefix"
+                    type="lock"
+                    style="color:rgba(0,0,0,.25)"
+                  />
                 </a-input>
-                <p class="errtxt" v-show="isError">账号或密码错误</p>
+                <p
+                  class="errtxt"
+                  v-show="isError"
+                >账号或密码错误</p>
               </a-form-item>
               <a-form-item>
                 <a-button
@@ -76,7 +98,9 @@ export default {
       error: ""
     };
   },
-  created() {},
+  created() {
+    this.init();
+  },
   mounted() {
     this.$nextTick(() => {
       // To disabled submit button at the beginning.
@@ -86,7 +110,16 @@ export default {
   },
   methods: {
     //页面初始化
-    init() {},
+    init() {
+      this.$store.dispatch("CheckLogin").then(res => {
+        console.log("isLogin", res);
+        if (!res) {
+          this.$router.push("/login");
+        } else {
+          this.$router.push("/");
+        }
+      });
+    },
     // Only show error after a field is touched.
     userNameError() {
       const { getFieldError, isFieldTouched } = this.form;
@@ -104,19 +137,10 @@ export default {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
-          // console.log("Received values of form: ", values);
+          console.log("Received values of form: ", values);
           if (values) {
-            let ret = postLogin(values);
-            console.log("ret", ret);
-            ret.then(res => {
-              let data = res.data;
-              if (data.status == "200") {
-                sessionStorage.setItem("user", JSON.stringify(data.user));
-                this.$router.push({ path: "/" });
-              } else {
-                that.error = data.msg;
-                that.show = true;
-              }
+            this.$store.dispatch("LoginByUsername", values).then(() => {
+              this.$router.push({ path: "/" });
             });
           } else {
           }

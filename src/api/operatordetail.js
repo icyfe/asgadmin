@@ -1,19 +1,34 @@
-const { Http } = require('../util/http');
-const http = new Http();
-import {BASE_URL} from '@/config/config'
+import request from '@/util/request'
 function operatordetailSelect(data) {
-    return http.post(`api/post/pc/operatordetail-select`, data);
+    return request({
+        url: 'api/post/pc/operatordetail-select',
+        method: 'post',
+        data,
+    })
 }
 
 function operatordetailUpdate(data) {
-    return http.post(`api/post/pc/operatordetail-update`, data);
+    return request({
+        url: 'api/post/pc/operatordetail-update',
+        method: 'post',
+        data,
+    })
+
 }
 
 function operatordetailDelete(data) {
-    return http.post(`api/post/pc/operatordetail-delete`, data);
+    return request({
+        url: 'api/post/pc/operatordetail-delete',
+        method: 'post',
+        data,
+    })
 }
 
 function pidtable(data) {
-    return http.post(`api/post/pc/pidtable`, data);
+    return request({
+        url: 'api/post/pc/pidtable',
+        method: 'post',
+        data,
+    })
 }
-export { operatordetailSelect,operatordetailUpdate,operatordetailDelete,pidtable}
+export { operatordetailSelect, operatordetailUpdate, operatordetailDelete, pidtable }

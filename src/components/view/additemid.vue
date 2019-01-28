@@ -54,7 +54,7 @@
     >
       <a-upload
         label="商品主图"
-        action="//localhost:3302/api/post/upload"
+        action="//39.108.215.49/api/post/upload/pic_url"
         listType="picture-card"
         @preview="handlePreview"
         @change="handleChange"
@@ -85,7 +85,7 @@
     >
       <a-upload
         label="商品小图"
-        action="//localhost:3302/api/post/upload"
+        action="//39.108.215.49/api/post/upload/small_img"
         listType="picture-card"
         @preview="handlePreview1"
         @change="handleChange1"
@@ -117,7 +117,11 @@
 </template>
 <script>
 import { operatoritemdetailinsert } from "@/api/operatoritemdetail";
+import { mapGetters } from "vuex";
 export default {
+  computed: {
+    ...mapGetters(["operatorcode"])
+  },
   data() {
     return {
       previewVisible: false,
@@ -125,7 +129,9 @@ export default {
       fileList: [{}],
       previewVisible1: false,
       previewImage1: "",
-      fileList1: [{}]
+      fileList1: [{}],
+      pic_url: [],
+      small_img: []
     };
   },
   methods: {
@@ -144,21 +150,39 @@ export default {
     },
     handleChange({ fileList }) {
       this.fileList = fileList;
-      console.log("fileList", fileList);
+      if (fileList[0] && fileList[0].response) {
+        this.pic_url.push(fileList[0].response.result);
+        console.log("pic", this.pic_url);
+      }
     },
     handleChange1({ fileList }) {
       this.fileList1 = fileList;
-      //console.log("fileList", fileList);
+
+      if (fileList[0] && fileList[0].response) {
+        this.small_img.push(fileList[0].response.result);
+        console.log("small", fileList[0].response, this.small_img);
+      }
     },
     handleSubmit(e) {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
           //console.log("Received values of form: ", values);
-          values.seller_id = "mm";
+          values.seller_id = this.operatorcode;
           values.shop_title = "chl店";
+          values.pic_url = this.pic_url;
+          values.small_img = this.small_img;
+          delete values.pict_url;
+          delete values.small_images;
 
-          let ret = operatoritemdetailinsert(values);
+          operatoritemdetailinsert(values).then(res => {
+            let data = res.data;
+            if (data.code == 200) {
+              this.$message.success("新增成功！", 4);
+              this.$router.push("./operator-itemdetail");
+            }
+          });
+
           console.log("values", values);
         }
       });
