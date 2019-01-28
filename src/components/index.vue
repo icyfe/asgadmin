@@ -59,7 +59,7 @@
             key="6"
             @click="jump('/orderlist')"
           >订单列表</a-menu-item>
-          <a-menu-item key="8">订单查询</a-menu-item>
+          <!-- <a-menu-item key="8">订单查询</a-menu-item> -->
         </a-sub-menu>
         <a-sub-menu key="sub4">
           <span slot="title">
@@ -82,6 +82,7 @@
         <a-menu-item
           key="11"
           @click="jump('/commission')"
+          v-if="jurisdiction=='superadmin'"
         >
           <a-icon type="file" />
           <span>佣金比例调整</span>
@@ -157,7 +158,7 @@
 import { mapGetters } from "vuex";
 export default {
   computed: {
-    ...mapGetters(["name", "phone", "avatar"])
+    ...mapGetters(["name", "phone", "avatar", "jurisdiction"])
   },
   data() {
     return {

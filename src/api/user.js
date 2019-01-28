@@ -21,4 +21,20 @@ function upuserpsw(data) {
         data
     })
 }
-export { userSelect, getmemberList, upuserpsw }
+//获取代理详细信息
+function getusermessage(data) {
+    return request({
+        url: `api/post/pc/usermessage`,
+        method: 'post',
+        data
+    })
+}
+//提升用户等级
+function userupgradelevel(data) {
+    return request({
+        url: `api/post/pc/upgradelevel`,
+        method: 'post',
+        data
+    })
+}
+export { userSelect, getmemberList, upuserpsw, getusermessage, userupgradelevel }
