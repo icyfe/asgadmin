@@ -14,6 +14,8 @@ import User from '@/components/view/user'
 import OrderList from '@/components/view/orderlist'
 import Commission from '@/components/view/commission'
 import CashDrawal from '@/components/view/cash-drawal'
+import itemidnews from '@/components/view/itemidnews'
+import additemidnews from '@/components/view/additemidnews'
 Vue.use(Router)
 
 export default new Router({
@@ -71,6 +73,15 @@ export default new Router({
         {
           path: '/cash-drawal',
           component: CashDrawal
+        }
+        ,
+        {
+          path: '/itemidnews',
+          component: itemidnews
+        },
+        {
+          path: '/additemidnews',
+          component: additemidnews
         }
       ]
     },

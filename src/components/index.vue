@@ -70,6 +70,15 @@
           >提现审核</a-menu-item>
 
         </a-sub-menu>
+        <a-sub-menu key="sub5">
+          <span slot="title">
+            <a-icon type="contacts" /><span>新闻管理</span></span>
+          <a-menu-item
+            key="itemidnews"
+            @click="jump('/itemidnews')"
+          >新闻信息</a-menu-item>
+          
+        </a-sub-menu>
         <a-menu-item
           key="11"
           @click="jump('/commission')"
