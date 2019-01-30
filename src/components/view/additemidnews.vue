@@ -3,6 +3,22 @@
     @submit="handleSubmit"
     :autoFormCreate="(form)=>{this.form = form}"
   >
+  <a-form-item label='商品ID' :labelCol="{ span: 5 }" :wrapperCol="{ span: 12 }" fieldDecoratorId="num_iid" :fieldDecoratorOptions="{rules: [{ required: true, message: '请选择商品ID' }]}">
+  <a-select
+    showSearch
+    
+    placeholder="input search num_iid"
+    style="width: 200px"
+    :defaultActiveFirstOption="false"
+    :showArrow="false"
+    :filterOption="false"
+    @search="handleSearch"
+    @change="handleChange1"
+    :notFoundContent="null"
+  >
+    <a-select-option v-for="d in data" :key="d.num_iid">{{d.num_iid}}</a-select-option>
+  </a-select>
+</a-form-item>
     <a-form-item
       label="新闻内容"
       :labelCol="{ span: 5 }"
@@ -56,19 +72,27 @@
 <script>
 import { itemidnewsinsert } from "@/api/itemidnews";
 import { mapGetters } from "vuex";
+import {
+  operatoritemdetail
+} from "@/api/operatoritemdetail";
 export default {
   computed: {
     ...mapGetters(["operatorcode"])
+  },
+  mounted() {
+    this.fetch();
   },
   data() {
     return {
       previewVisible: false,
       previewImage: "",
       fileList: [{}],
+      data: [],
+      num_iid: '',
       //previewVisible1: false,
     //   previewImage1: "",
     //   fileList1: [{}],
-       pic_url: [],
+      pic_url: [],
     //   small_img: []
     };
   },
@@ -87,6 +111,32 @@ export default {
         this.pic_url.push(fileList[0].response.result);
         console.log("pic", this.pic_url);
       }
+    }
+    ,
+    fetch(params = {}) {
+      this.loading = true;
+      let small_image = [];
+      let ret = operatoritemdetail({ OperatorCode: this.operatorcode });
+
+      ret.then(res => {
+        const pagination = { ...this.pagination };
+
+        pagination.total = res.data.results.length;
+
+        this.loading = false;
+        this.data = res.data.results;
+        
+        console.log("data",this.data)
+        this.pagination = pagination;
+      });
+    },
+    handleSearch (num_iid) {
+      fetch(num_iid, data => this.data = data);
+    },
+    handleChange1 (num_iid) {
+      console.log("num_iid",num_iid)
+      this.num_iid = num_iid
+      fetch(num_iid, data => this.data = data);
     },
     handleSubmit(e) {
       e.preventDefault();
