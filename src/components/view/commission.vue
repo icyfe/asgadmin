@@ -69,7 +69,11 @@
 </template>
 <script>
 import { getCommission, upCommission } from "@/api/commission";
+import { mapGetters } from "vuex";
 export default {
+  computed: {
+    ...mapGetters(["jurisdiction"])
+  },
   data() {
     return {
       tzratio: null,
@@ -86,6 +90,10 @@ export default {
   },
   methods: {
     init() {
+      if (this.jurisdiction != "superadmin") {
+        this.$router.push("/401");
+        return;
+      }
       getCommission().then(res => {
         let data = res.data.result;
         this.tzratio = data.tz.ratio;

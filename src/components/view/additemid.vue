@@ -54,7 +54,7 @@
     >
       <a-upload
         label="商品主图"
-        action="//39.108.215.49/api/post/upload/pic_url"
+        :action="uploadpic"
         listType="picture-card"
         @preview="handlePreview"
         @change="handleChange"
@@ -85,7 +85,7 @@
     >
       <a-upload
         label="商品小图"
-        action="//39.108.215.49/api/post/upload/small_img"
+        :action='uploadsmall'
         listType="picture-card"
         @preview="handlePreview1"
         @change="handleChange1"
@@ -118,6 +118,7 @@
 <script>
 import { operatoritemdetailinsert } from "@/api/operatoritemdetail";
 import { mapGetters } from "vuex";
+import {BASE_URL} from '@/config/config'
 export default {
   computed: {
     ...mapGetters(["operatorcode"])
@@ -131,7 +132,9 @@ export default {
       previewImage1: "",
       fileList1: [{}],
       pic_url: [],
-      small_img: []
+      small_img: [],
+      uploadpic:`${BASE_URL}api/post/upload/pic_url`,
+      uploadsmall:`${BASE_URL}api/post/upload/small_img`
     };
   },
   methods: {

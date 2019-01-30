@@ -15,7 +15,9 @@
       >
         <a-popconfirm
           v-if="data.length"
-          title="Sure to delete?"
+          cancelText="取消"
+          okText="确认"
+          title="确定删除?"
           @confirm="() => onDelete(record.num_iid,index)"
         >
           <a href="javascript:;">删除</a>

@@ -5,7 +5,7 @@
       listType="picture-card"
       class="avatar-uploader"
       :showUploadList="false"
-      action="//127.0.0.1:3302/api/post/upload/avatar"
+      :action="uploadavatar"
       :beforeUpload="beforeUpload"
       @change="handleChange"
       :data="{phone}"
@@ -19,7 +19,7 @@
 
       <div v-else>
         <a-icon :type="loading ? 'loading' : 'plus'" />
-        <div class="ant-upload-text">Upload</div>
+        <div class="ant-upload-text">上传</div>
       </div>
       <a>点击更换头像</a>
     </a-upload>
@@ -33,6 +33,7 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
+import { BASE_URL } from "@/config/config";
 function getBase64(img, callback) {
   const reader = new FileReader();
   reader.addEventListener("load", () => callback(reader.result));
@@ -41,7 +42,8 @@ function getBase64(img, callback) {
 export default {
   data() {
     return {
-      loading: false
+      loading: false,
+      uploadavatar:`${BASE_URL}api/post/upload/avatar`
     };
   },
   computed: {
@@ -58,19 +60,20 @@ export default {
         getBase64(info.file.originFileObj, imageUrl => {
           this.$store.commit("SET_AVATAR", imageUrl);
           //   this.avatar = imageUrl;
-          this.$message.success('更换成功！')
+          // console.log('头像',this.avatar);
+          this.$message.success("更换成功！");
           this.loading = false;
         });
       }
     },
     beforeUpload(file) {
       const isJPG = file.type === "image/jpeg";
-      if (!isJPG) {
-        this.$message.error("You can only upload JPG file!");
-      }
+      // if (!isJPG) {
+      //   this.$message.error("You can only upload JPG file!");
+      // }
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isLt2M) {
-        this.$message.error("Image must smaller than 2MB!");
+        this.$message.error("图片大小不能大于2M!");
       }
       return isJPG && isLt2M;
     }

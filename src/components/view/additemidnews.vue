@@ -3,22 +3,30 @@
     @submit="handleSubmit"
     :autoFormCreate="(form)=>{this.form = form}"
   >
-  <a-form-item label='商品ID' :labelCol="{ span: 5 }" :wrapperCol="{ span: 12 }" fieldDecoratorId="num_iid" :fieldDecoratorOptions="{rules: [{ required: true, message: '请选择商品ID' }]}">
-  <a-select
-    showSearch
-    
-    placeholder="input search num_iid"
-    style="width: 200px"
-    :defaultActiveFirstOption="false"
-    :showArrow="false"
-    :filterOption="false"
-    @search="handleSearch"
-    @change="handleChange1"
-    :notFoundContent="null"
-  >
-    <a-select-option v-for="d in data" :key="d.num_iid">{{d.num_iid}}</a-select-option>
-  </a-select>
-</a-form-item>
+    <a-form-item
+      label='商品ID'
+      :labelCol="{ span: 5 }"
+      :wrapperCol="{ span: 12 }"
+      fieldDecoratorId="num_iid"
+      :fieldDecoratorOptions="{rules: [{ required: true, message: '请选择商品ID' }]}"
+    >
+      <a-select
+        showSearch
+        placeholder="选择商品ID"
+        style="width: 200px"
+        :defaultActiveFirstOption="false"
+        :showArrow="false"
+        :filterOption="false"
+        @search="handleSearch"
+        @change="handleChange1"
+        :notFoundContent="null"
+      >
+        <a-select-option
+          v-for="d in data"
+          :key="d.num_iid"
+        >{{d.num_iid}}</a-select-option>
+      </a-select>
+    </a-form-item>
     <a-form-item
       label="新闻内容"
       :labelCol="{ span: 5 }"
@@ -28,7 +36,7 @@
     >
       <a-input id="itemid_content" />
     </a-form-item>
-    
+
     <a-form-item
       label="商品主图"
       :labelCol="{ span: 5 }"
@@ -38,7 +46,7 @@
     >
       <a-upload
         label="商品主图"
-        action="//127.0.0.1:3302/api/post/upload/pic_url"
+        :action="uploadurl"
         listType="picture-card"
         @preview="handlePreview"
         @change="handleChange"
@@ -60,7 +68,7 @@
         >
       </a-modal>
     </a-form-item>
-    
+
     <a-form-item :wrapperCol="{ span: 12, offset: 5 }">
       <a-button
         type="primary"
@@ -72,9 +80,8 @@
 <script>
 import { itemidnewsinsert } from "@/api/itemidnews";
 import { mapGetters } from "vuex";
-import {
-  operatoritemdetail
-} from "@/api/operatoritemdetail";
+import { operatoritemdetail } from "@/api/operatoritemdetail";
+import { BASE_URL } from "@/config/config";
 export default {
   computed: {
     ...mapGetters(["operatorcode"])
@@ -87,13 +94,19 @@ export default {
       previewVisible: false,
       previewImage: "",
       fileList: [{}],
+
       data: [],
-      num_iid: '',
+      num_iid: "",
       //previewVisible1: false,
-    //   previewImage1: "",
-    //   fileList1: [{}],
+      //   previewImage1: "",
+      //   fileList1: [{}],
       pic_url: [],
-    //   small_img: []
+      //   small_img: []
+      uploadurl: `${BASE_URL}api/post/upload/pic_url`
+      //previewVisible1: false,
+      //   previewImage1: "",
+      //   fileList1: [{}],
+      //   small_img: []
     };
   },
   methods: {
@@ -111,8 +124,7 @@ export default {
         this.pic_url.push(fileList[0].response.result);
         console.log("pic", this.pic_url);
       }
-    }
-    ,
+    },
     fetch(params = {}) {
       this.loading = true;
       let small_image = [];
@@ -125,18 +137,18 @@ export default {
 
         this.loading = false;
         this.data = res.data.results;
-        
-        console.log("data",this.data)
+
+        console.log("data", this.data);
         this.pagination = pagination;
       });
     },
-    handleSearch (num_iid) {
-      fetch(num_iid, data => this.data = data);
+    handleSearch(num_iid) {
+      fetch(num_iid, data => (this.data = data));
     },
-    handleChange1 (num_iid) {
-      console.log("num_iid",num_iid)
-      this.num_iid = num_iid
-      fetch(num_iid, data => this.data = data);
+    handleChange1(num_iid) {
+      console.log("num_iid", num_iid);
+      this.num_iid = num_iid;
+      fetch(num_iid, data => (this.data = data));
     },
     handleSubmit(e) {
       e.preventDefault();
@@ -160,7 +172,6 @@ export default {
         }
       });
     }
-
   }
 };
 </script>

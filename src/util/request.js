@@ -5,8 +5,8 @@ import { message } from 'ant-design-vue'
 
 // create an axios instance
 const service = axios.create({
-    baseURL:'http://localhost:3302/', // api 的 base_url
-    // baseURL:'http://39.108.215.49/', 
+    // baseURL:'http://localhost:3302/', // api 的 base_url
+    baseURL:'http://39.108.215.49/', 
     timeout: 5000 // request timeout
 })
 

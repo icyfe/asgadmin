@@ -89,6 +89,7 @@ const user = {
                         let { user } = data
 
                         sessionStorage.setItem('user', JSON.stringify(user));
+                        console.log('user',user)
                         commit('SET_NAME', user.name);
                         commit('SET_AVATAR', user.avatar);
                         commit('SET_PID', user.pid)
