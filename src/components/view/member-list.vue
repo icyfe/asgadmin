@@ -23,6 +23,26 @@
         {{name.first}} {{name.last}}
       </template>
       <template
+        slot="commissionmonth"
+        slot-scope="pid, record"
+      >
+        <div class='editable-row-operations'>
+          <span>
+            <a @click="jump('/commissionmonth-list',record.pid)">查看详情</a>
+          </span>
+        </div>
+      </template>
+       <template
+        slot="commissiontotal"
+        slot-scope="pid, record"
+      >
+        <div class='editable-row-operations'>
+          <span>
+            <a @click="jump('/commissiontotal-list',record.pid)">查看详情</a>
+          </span>
+        </div>
+      </template>
+      <template
         slot="operation"
         slot-scope="username"
       >
@@ -94,11 +114,13 @@ const columns = [
   },
   {
     title: "本月业绩",
-    dataIndex: "commissionmonth"
+    dataIndex: "commissionmonth",
+    scopedSlots: { customRender: "commissionmonth" }
   },
   {
     title: "总业绩",
-    dataIndex: "commissiontotal"
+    dataIndex: "commissiontotal",
+    scopedSlots: { customRender: "commissiontotal" }
   },
   {
     title: "操作",
@@ -196,6 +218,15 @@ export default {
         this.data = data.result;
         console.log("res", this.data);
       });
+    },
+    jump(url,pid) {
+     
+      this.$router.push({
+          path: url,
+          query: {
+            adzone_id: pid
+          }
+        });
     }
   }
 };

@@ -16,4 +16,21 @@ function searchOrder(data) {
         data
     })
 }
-export { getOrderList, searchOrder }
+// 订单月查询
+function searchmonthOrder(data) {
+    return request({
+        url: 'api/post/order/searchmonth',
+        method: 'post',
+        data
+    })
+}
+// 订单历史查询
+function searchtotalOrder(data) {
+    return request({
+        url: 'api/post/order/searchtotal',
+        method: 'post',
+        data
+    })
+}
+
+export { getOrderList, searchOrder,searchmonthOrder ,searchtotalOrder}

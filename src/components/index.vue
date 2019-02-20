@@ -23,16 +23,23 @@
         </a-sub-menu>
         <a-sub-menu key="sub2">
           <span slot="title">
-            <a-icon type="team"/>
-            <span>运营商管理</span>
-          </span>
-          <a-menu-item key="Operator1" @click="jump('/operator-detail')">运营商信息</a-menu-item>
-          <a-menu-item key="Operator2" @click="jump('/operator-user')">我的会员</a-menu-item>
-          <a-menu-item key="Operator3" @click="jump('/operator-itemdetail')">商品信息</a-menu-item>
+            <a-icon type="team" /><span>运营商管理</span></span>
+          <a-menu-item
+            key="Operator1"
+            @click="jump('/operator-detail')"
+          >运营商信息</a-menu-item>
+          <a-menu-item
+            key="Operator2"
+            @click="jump('/operator-user')"
+          >合伙人管理</a-menu-item>
           <!-- <a-menu-item
-            key="Operator5"
+            key="Operator3"
             @click="jump('/operator-itemdetail')"
-          >新闻发布</a-menu-item>-->
+          >商品信息</a-menu-item> -->
+           <a-menu-item
+            key="Operator5"
+            @click="jump('/registeroperator')"
+          >运营商注册</a-menu-item> 
         </a-sub-menu>
         <a-sub-menu key="sub3">
           <span slot="title">

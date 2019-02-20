@@ -86,6 +86,18 @@ export default new Router({
         {
           path: '/additemidnews',
           component: () => import('@/components/view/additemidnews')
+        },
+        {
+          path: '/commissionmonth-list',
+          component: () => import('@/components/view/commissionmonth-list')
+        },
+        {
+          path: '/commissiontotal-list',
+          component: () => import('@/components/view/commissiontotal-list')
+        },
+        {
+          path: '/registeroperator',
+          component: () => import('@/components/view/registeroperator')
         }
       ]
     },
