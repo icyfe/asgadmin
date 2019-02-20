@@ -160,7 +160,7 @@ export default {
     fetch(params = {}) {
       this.loading = true;
       let small_image = [];
-      let ret = operatoritemdetail({ OperatorCode: this.operatorcode });
+      let ret = operatoritemdetail({ OperatorCode: this.$route.query.OperatorCode });
 
       ret.then(res => {
         const pagination = { ...this.pagination };

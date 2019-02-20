@@ -7,6 +7,14 @@ function userSelect(data) {
     });
 }
 
+function userSelect1(data) {
+    return request({
+        url: `api/post/pc/user-select1`,
+        method: 'post',
+        data,
+    });
+}
+
 function getmemberList(data) {
     return request({
         url: `api/post/pc/memberlist`,
@@ -37,4 +45,4 @@ function userupgradelevel(data) {
         data
     })
 }
-export { userSelect, getmemberList, upuserpsw, getusermessage, userupgradelevel }
+export { userSelect, getmemberList, upuserpsw, getusermessage, userupgradelevel,userSelect1 }

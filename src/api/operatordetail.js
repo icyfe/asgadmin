@@ -1,4 +1,14 @@
 import request from '@/util/request'
+
+
+function operatordetailInsert(data) {
+    return request({
+        url: 'api/post/pc/operatordetail-insert',
+        method: 'post',
+        data,
+    })
+}
+
 function operatordetailSelect(data) {
     return request({
         url: 'api/post/pc/operatordetail-select',
@@ -31,4 +41,4 @@ function pidtable(data) {
         data,
     })
 }
-export { operatordetailSelect, operatordetailUpdate, operatordetailDelete, pidtable }
+export { operatordetailSelect, operatordetailUpdate, operatordetailDelete, pidtable,operatordetailInsert }

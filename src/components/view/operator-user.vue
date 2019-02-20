@@ -1,51 +1,72 @@
 <template>
-<div>
-    <a-table class="table" :columns="columns" :dataSource="data" :pagination="pagination" :loading="loading" @change="handleTableChange">
-        <!-- <template slot="name" slot-scope="name">
+  <div>
+    <div id="search-wrap">
+      <a-input-search
+        placeholder="请输入要查询的运营商编码"
+        @search="search"
+        enterButton
+      />
+    </div>
+    <a-table
+      class="table"
+      :columns="columns"
+      :dataSource="data"
+      :pagination="pagination"
+      :loading="loading"
+      @change="handleTableChange"
+    >
+      <!-- <template slot="name" slot-scope="name">
             {{name.first}} {{name.last}}
-        </template> -->
-        
+      </template>-->
     </a-table>
-</div>
- 
+  </div>
 </template>
 <script>
 const columns = [
-  {
-    title: "PID",
-    dataIndex: "PID",
-    //sorter: true,
-    width: "20%",
-    //scopedSlots: { customRender: "PID" }
-  },
+  // {
+  //   title: "pid",
+  //   dataIndex: "pid",
+  //   //sorter: true,
+  //   width: "20%"
+  //   //scopedSlots: { customRender: "PID" }
+  // },
   {
     title: "用户名",
-    dataIndex: "Username",
+    dataIndex: "username",
     width: "20%"
   },
   {
     title: "手机号",
-    dataIndex: "Phone"
+    dataIndex: "phone"
   },
   {
     title: "邀请码",
-    dataIndex: "InviteCode"
+    dataIndex: "Invitecode"
   }
 ];
-import {userSelect} from "@/api/user"
+import { userSelect,userSelect1 } from "@/api/user";
+import { mapGetters } from "vuex";
 export default {
   mounted() {
     this.fetch();
+  },
+  computed: {
+    ...mapGetters(["operatorcode", "pid"])
   },
   data() {
     return {
       data: [],
       pagination: {},
       loading: false,
+      keycode:'',
       columns
     };
   },
   methods: {
+    search(value) {
+      this.keycode = value;
+      this.fetch();
+    },
     handleTableChange(pagination, filters, sorter) {
       console.log(pagination);
       const pager = { ...this.pagination };
@@ -60,9 +81,9 @@ export default {
       });
     },
     fetch(params = {}) {
-     console.log("params:", params);
+      console.log("params:", params);
       this.loading = true;
-      let ret = userSelect({OperatorCode:'mm'});
+      let ret = userSelect1({ OperatorCode: this.operatorcode,pid : this.pid ,keycode : this.keycode});
 
       ret.then(res => {
         console.log("请求到的数据", res);
@@ -81,8 +102,15 @@ export default {
 };
 </script>
 <style  scoped lang="less">
-.table  {
-    color:red!important;
+.table {
+  color: red !important;
+}
+#search-wrap {
+  width: 500px !important;
+  margin: 0 auto;
+  .ant-input-suffix {
+    right: 0px;
+  }
 }
 </style>
  
