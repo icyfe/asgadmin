@@ -1,16 +1,11 @@
 <template>
-  <div
-    class="content"
-    v-if='tzratio'
-  >
-    <a-form
-      :form="form"
-      @submit="submit"
-    >
+  <div class="content" v-if="tzratio">
+    <a-form :form="form" @submit="submit">
       <div class="wrap">
         <h2 class="title">各等级佣金比列</h2>
         <a-form-item>
           <a-input
+            :disabled="disable"
             addonBefore="团长"
             addonAfter="%"
             v-decorator="[
@@ -20,8 +15,8 @@
           />
         </a-form-item>
         <a-form-item>
-
           <a-input
+            :disabled="disable"
             addonBefore="一级代理"
             addonAfter="%"
             v-decorator="[
@@ -29,11 +24,10 @@
           {rules: [{ required: true,pattern:/\d/g, message: '请输入合法的比列值！' }],initialValue:oneratio *100}
         ]"
           />
-
         </a-form-item>
         <a-form-item>
-
           <a-input
+            :disabled="disable"
             addonBefore="二级代理"
             addonAfter="%"
             v-decorator="[
@@ -41,11 +35,10 @@
           {rules: [{ required: true,pattern:/\d/g, message: '请输入合法的比列值！' }],initialValue:tworatio *100}
         ]"
           />
-
         </a-form-item>
         <a-form-item>
-
           <a-input
+            :disabled="disable"
             addonBefore="三级代理"
             addonAfter="%"
             v-decorator="[
@@ -53,16 +46,10 @@
           {rules: [{ required: true,pattern:/\d/g, message: '请输入合法的比列值！' }],initialValue:threeratio *100}
         ]"
           />
-
         </a-form-item>
       </div>
       <a-form-item>
-        <a-button
-          type="primary"
-          class="bt"
-          size="large"
-          @click="submit"
-        >保存修改</a-button>
+        <a-button type="primary" class="bt" size="large" @click="submit" :disabled="disable">保存修改</a-button>
       </a-form-item>
     </a-form>
   </div>
@@ -79,7 +66,8 @@ export default {
       tzratio: null,
       oneratio: null,
       tworatio: null,
-      threeratio: null
+      threeratio: null,
+      disable: false
     };
   },
   beforeCreate() {
@@ -91,8 +79,7 @@ export default {
   methods: {
     init() {
       if (this.jurisdiction != "superadmin") {
-        this.$router.push("/401");
-        return;
+        this.disable = true;
       }
       getCommission().then(res => {
         let data = res.data.result;

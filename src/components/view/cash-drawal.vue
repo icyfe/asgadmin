@@ -1,38 +1,33 @@
 <template>
-  <a-table
-    :columns="columns"
-    :dataSource="data"
-    v-if='data'
-  >
-    <a
-      slot="zfbname"
-      slot-scope="zfbname"
-      href="javascript:;"
-    >{{zfbname}}</a>
+  <a-table :columns="columns" :dataSource="data" v-if="data">
+    <a slot="zfbname" slot-scope="zfbname" href="javascript:;">{{zfbname}}</a>
     <span slot="customTitle">
-      <a-icon type="smile-o" /> 会员支付宝</span>
-    <span
-      slot="StautsType"
-      slot-scope="StautsType"
-    >
-      <a-tag color="blue">{{StautsType}}</a-tag>
+      <a-icon type="smile-o"/>会员支付宝
+    </span>
+    <span slot="StautsType" slot-scope="StautsType, record, index">
+      <a-tag :color="tipcolor(index)" @click="handleInputChange(index)">{{StautsType}}</a-tag>
     </span>
     <span
-      slot="TransDate"
-      slot-scope="TransDate"
-    >
-      {{TransDate}}
-    </span>
+      class="money"
+      slot="CommissionTrans"
+      slot-scope="CommissionTrans, record, index"
+      @click="jump(index)"
+    >{{CommissionTrans}}元</span>
   </a-table>
 </template>
 <script>
-import { getCashDrawlList } from "@/api/cashdrawal";
+import { getCashDrawlList, upCashDrawlList } from "@/api/cashdrawal";
 const columns = [
   {
     dataIndex: "zfbname",
     key: "zfbname",
     slots: { title: "customTitle" },
     scopedSlots: { customRender: "zfbname" }
+  },
+  {
+    title: "支付宝账号",
+    dataIndex: "zfb",
+    key: "zfb"
   },
   {
     title: "提现时间",
@@ -42,7 +37,8 @@ const columns = [
   {
     title: "提现金额",
     dataIndex: "CommissionTrans",
-    key: "CommissionTrans"
+    key: "CommissionTrans",
+    scopedSlots: { customRender: "CommissionTrans" }
   },
   {
     title: "审核状态",
@@ -51,10 +47,9 @@ const columns = [
     scopedSlots: { customRender: "StautsType" }
   },
   {
-    title: "推广位ID",
-    dataIndex: "PID",
-    key: "PID",
-    scopedSlots: { customRender: "PID" }
+    title: "合伙人编号",
+    dataIndex: "usercode",
+    key: "usercode"
   }
 ];
 
@@ -89,6 +84,7 @@ export default {
       columns
     };
   },
+  computed: {},
   created() {
     this.init();
   },
@@ -100,7 +96,27 @@ export default {
         this.data = data.data;
         console.log(this.data);
       });
+    },
+    jump(index) {
+      console.log(index);
+    },
+    handleInputChange(index) {
+      // this.data[index].StautsType = "已审核";
+      this.data[index].StautsType = "已审核";
+      upCashDrawlList({ id: this.data[index].ID }).then(res => {
+        console.log(res);
+      });
+    },
+    tipcolor(index) {
+      let color;
+      return (color =
+        this.data[index].StautsType == "已审核" ? "green" : "blue");
     }
   }
 };
 </script>
+<style lang="less" scoped>
+  .money{
+    cursor: pointer;
+  }
+</style>

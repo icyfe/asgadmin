@@ -7,5 +7,11 @@ function getCashDrawlList(params = {}) {
         params
     })
 }
-
-export { getCashDrawlList }
+function upCashDrawlList(data = {}) {
+    return request({
+        url: 'api/post/yj/upstatus',
+        method: 'post',
+        data
+    })
+}
+export { getCashDrawlList, upCashDrawlList }
