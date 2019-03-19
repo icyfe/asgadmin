@@ -1,189 +1,181 @@
 <template>
-  <a-form
-    @submit="handleSubmit"
-    :autoFormCreate="(form)=>{this.form = form}"
-  >
-    <a-form-item
-      label='商品ID'
-      :labelCol="{ span: 5 }"
-      :wrapperCol="{ span: 12 }"
-      fieldDecoratorId="num_iid"
-      :fieldDecoratorOptions="{rules: [{ required: true, message: '请选择商品ID' }]}"
-    >
-      <a-select
-        showSearch
-        placeholder="选择商品ID"
-        style="width: 200px"
-        :defaultActiveFirstOption="false"
-        :showArrow="false"
-        :filterOption="false"
-        @search="handleSearch"
-        @change="handleChange1"
-        :notFoundContent="null"
-      >
-        <a-select-option
-          v-for="d in data"
-          :key="d.num_iid"
-        >{{d.num_iid}}</a-select-option>
-      </a-select>
-    </a-form-item>
-    <a-form-item
-      label="新闻内容"
-      :labelCol="{ span: 5 }"
-      :wrapperCol="{ span: 12 }"
-      fieldDecoratorId="itemid_content"
-      :fieldDecoratorOptions="{rules: [{type:'string', required: true }]}"
-    >
-      <a-input id="itemid_content" />
-    </a-form-item>
-
-    <a-form-item
-      label="商品主图"
-      :labelCol="{ span: 5 }"
-      :wrapperCol="{ span: 12 }"
-      fieldDecoratorId="pict_url"
-      :fieldDecoratorOptions="{rules: []}"
-    >
-      <a-upload
-        label="商品主图"
-        :action="uploadurl"
-        listType="picture-card"
-        @preview="handlePreview"
-        @change="handleChange"
-      >
-        <div v-if="fileList.length < 2">
-          <a-icon type="plus" />
-          <div class="ant-upload-text">上传图片</div>
-        </div>
-      </a-upload>
-      <a-modal
-        :visible="previewVisible"
-        :footer="null"
-        @cancel="handleCancel"
-      >
-        <img
-          alt="example"
-          style="width: 100%"
-          :src="previewImage"
+  <div class="app">
+    <a-form :form="form" @submit="handleSubmit">
+      <a-form-item class="form-item-title" label="新闻标题" :wrapper-col="{ span: 12 }">
+        <a-input
+          v-decorator="[
+          'news_title',
+          {rules: [{ required: true, message: '请输入新闻标题!' }], initialValue:news_title,}
+        ]"
+          placeholder="请输入新闻标题"
+        />
+      </a-form-item>
+      <!-- <a-form-item class="form-item-title" label="新闻栏目" :wrapper-col="{ span: 12 }">
+        <a-select
+          v-decorator="[
+          'news_type',
+          {rules: [{ required: true, message: '请选择新闻栏目!' }],initialValue:news_type}
+        ]"
+          placeholder="选择栏目"
         >
-      </a-modal>
-    </a-form-item>
-
-    <a-form-item :wrapperCol="{ span: 12, offset: 5 }">
-      <a-button
-        type="primary"
-        htmlType="submit"
-      >新增</a-button>
-    </a-form-item>
-  </a-form>
+          <a-select-option value="male">花花新闻</a-select-option>
+          <a-select-option value="female">周边新闻</a-select-option>
+        </a-select>
+      </a-form-item>-->
+      <a-form-item class="form-item-title" label="新闻栏目" v-if="residences.length>0" :wrapper-col="{ span: 12 }">
+        <a-cascader
+          @change="handleChange"
+          expandTrigger="hover"
+          v-decorator="[
+          'news_type',
+          {
+            initialValue:news_type,
+            rules: [{ type: 'array', required: true, message: '请选择新闻栏目!' }],
+          }
+        ]"
+          placeholder="选择栏目"
+          :options="residences"
+        />
+      </a-form-item>
+      <a-form-item>
+        <mceeditor v-model="news_content" @on-upload-complete="uploadcomplete"></mceeditor>
+        <!-- Value:{{Value}} -->
+      </a-form-item>
+      <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
+        <a-button type="primary" html-type="submit">提交</a-button>
+      </a-form-item>
+    </a-form>
+    <!--<mce-editor 
+    :config           = "Config"
+     v-model          = "Value"
+    :url              = "Url" //图片上传地址
+    :max-size         = "MaxSize"//文件上传最大值
+    :accept           = "Accept"//接收什么格式的图片
+    :with-credentials = false
+    @on-ready         = "onEditorReady"//后面什么的没研究了
+    @on-destroy       = "onEditorDestroy"
+    @on-upload-success= "onEditorUploadComplete"
+    @on-upload-fail   = "onEditorUploadFail"
+    on-upload-complete
+    ></mce-editor>-->
+  </div>
 </template>
+
 <script>
-import { itemidnewsinsert } from "@/api/itemidnews";
+import { insertnews, getallnewitem } from "@/api/news";
 import { mapGetters } from "vuex";
-import { operatoritemdetail } from "@/api/operatoritemdetail";
-import { BASE_URL } from "@/config/config";
+import mceeditor from "@/components/Tinymce";
+window.tinymce.baseURL = "/static/tinymce";
+window.tinymce.suffix = ".min";
+
 export default {
-  computed: {
-    ...mapGetters(["operatorcode"])
+  components: {
+    mceeditor
   },
-  mounted() {
-    this.fetch();
+  computed: {
+    ...mapGetters(["name"])
   },
   data() {
     return {
-      previewVisible: false,
-      previewImage: "",
-      fileList: [{}],
-
-      data: [],
-      num_iid: "",
-      //previewVisible1: false,
-      //   previewImage1: "",
-      //   fileList1: [{}],
-      pic_url: [],
-      //   small_img: []
-      uploadurl: `${BASE_URL}api/post/upload/pic_url`
-      //previewVisible1: false,
-      //   previewImage1: "",
-      //   fileList1: [{}],
-      //   small_img: []
+      news_content: "",
+      news_title: "",
+      news_type: [],
+      id: "",
+      formLayout: "horizontal",
+      form: this.$form.createForm(this),
+      residences: []
     };
   },
+  created() {
+    this.init();
+  },
   methods: {
-    handleCancel() {
-      this.previewVisible = false;
-    },
-    handlePreview(file) {
-      this.previewImage = file.url || file.thumbUrl;
-      this.previewVisible = true;
-      //onsole.log("file", file);
-    },
-    handleChange({ fileList }) {
-      this.fileList = fileList;
-      if (fileList[0] && fileList[0].response) {
-        this.pic_url.push(fileList[0].response.result);
-        console.log("pic", this.pic_url);
+    init() {
+      let { params } = this.$route.query;
+      if (params) {
+        params = JSON.parse(params);
+        console.log("提现申请", params);
+        this.news_content = params.news_content;
+        this.news_title = params.news_title;
+        this.news_type = params.news_type.split("/");
+        this.id = params.id;
       }
-    },
-    fetch(params = {}) {
-      this.loading = true;
-      let small_image = [];
-      let ret = operatoritemdetail({ OperatorCode: this.operatorcode });
-
-      ret.then(res => {
-        const pagination = { ...this.pagination };
-
-        pagination.total = res.data.results.length;
-
-        this.loading = false;
-        this.data = res.data.results;
-
-        console.log("data", this.data);
-        this.pagination = pagination;
+      getallnewitem().then(res => {
+        let { data } = res;
+        if (data.code == 200) {
+          console.log(res);
+          this.residences = data.data;
+          console.log("after", this.residences);
+        }
       });
     },
-    handleSearch(num_iid) {
-      fetch(num_iid, data => (this.data = data));
+    uploadcomplete(params) {
+      console.log("上传完成", params);
     },
-    handleChange1(num_iid) {
-      console.log("num_iid", num_iid);
-      this.num_iid = num_iid;
-      fetch(num_iid, data => (this.data = data));
+    handleChange(value, list) {
+      // list = list || this.residences;
+      // // console.log('!@!@',list)
+      // value = value[0];
+      // let _index = 0;
+      // let isHaveChild = false;
+      // // console.log('获取新闻栏目',value)
+      // list.forEach((item, index) => {
+      //   if (item.value == value) {
+      //     _index = index;
+      //   }
+      //   if (item.hasOwnProperty("children")) {
+      //     isHaveChild = true;
+      //   }
+      // });
+      // if (!_index && isHaveChild) {
+      //   this.handleChange(value, list[_index].children);
+      // } else {
+      //   getnewitem({ type: value }).then(res => {
+      //     let { data } = res;
+      //     if (data.code == 200) {
+      //       list[_index].children = [];
+      //       for (let item of data.data) {
+      //         list[_index].children.push({
+      //           value: item.columnlevel,
+      //           label: item.columnlevel
+      //         });
+      //       }
+      //     }
+      //   });
+      // }
     },
     handleSubmit(e) {
+      console.log("mc", this.name);
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
-          //console.log("Received values of form: ", values);
-          values.OperatorCode = this.operatorcode;
-          values.pic_url = this.pic_url;
-          delete values.pict_url;
-          delete values.small_images;
-
-          itemidnewsinsert(values).then(res => {
-            let data = res.data;
-            if (data.code == 200) {
-              this.$message.success("新增成功！", 4);
-              this.$router.push("./itemidnews");
-            }
+          let news_type = values.news_type.join("/");
+          insertnews({
+            news_title: values.news_title,
+            news_type,
+            news_content: this.news_content,
+            create_user: this.name,
+            id: this.id
+          }).then(res => {
+            this.$message.success("操作成功");
+            this.$router.push("/newslist");
           });
-
-          console.log("values", values);
         }
       });
     }
   }
 };
 </script>
-<style>
-/* you can make up upload button and sample style by using stylesheets */
-.ant-upload-select-picture-card i {
-  font-size: 32px;
-  color: #999;
-}
 
-.ant-upload-select-picture-card .ant-upload-text {
-  margin-top: 8px;
-  color: #666;
+<style lang="less" scoped>
+.app {
+  width: 1204px;
+  margin: 0 auto;
+  overflow: hidden;
+  .form-item-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+  }
 }
 </style>

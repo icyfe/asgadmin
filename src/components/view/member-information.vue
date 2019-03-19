@@ -1,90 +1,264 @@
 <template>
-  <div
-    class="content"
-    v-if="data"
-  >
-    <a-avatar
-      :size=100
-      :src="data.avatar"
-      alt="点击更换头像"
-    />
-    <div>
-      <p class="txt">昵称: {{data.username}}</p>
-      <p class="txt">电话: {{data.phone}}</p>
-      <p class="txt">支付宝账号: {{data.zfb}}</p>
-      <p class="txt">性别: {{data.sex}}</p>
-      <p class="txt">支付宝名称: {{data.zfbname}}</p>
-      <p class="txt">推广位ID: {{data.pid}}</p>
-      <p class="txt">所属运营商代号: {{data.operatorcode}}</p>
-      <p class="txt">等级: {{data.jurisdiction}}</p>
-      <p class="txt">邀请码: {{data.invitecode}}</p>
+  <div>
+    <a-form :form="form" class="myform" @submit="handleSubmit" v-if="user">
+      <a-form-item v-bind="formItemLayout" label="昵称">
+        <a-input
+          v-decorator="[
+          'name',
+          {
+            rules: [{
+              required: true, message: '请输入昵称'
+            }],
+            initialValue:user.username
+          },
+          
+        ]"
+        />
+      </a-form-item>
+      <a-form-item v-bind="formItemLayout" label="手机(用户名)">
+        <a-input
+          v-decorator="[
+          'phone',
+          {
+            rules: [ {
+              required: true, message: '请输入手机号码',
+            }],
+            initialValue:user.phone
+          }
+        ]"
+        />
+      </a-form-item>
+      <a-form-item v-bind="formItemLayout" label="密码">
+        <a-input
+          v-decorator="[
+          'pwd',
+          {
+            rules: [ {
+              required: true, message: '请输入手机号码',
+            }],
+            initialValue:user.pwd
+          }
+        ]"
+        />
+      </a-form-item>
+      <a-form-item v-bind="formItemLayout" label="支付宝账号">
+        <a-input
+          v-decorator="[
+          'zfb',
+          {
+            rules: [ {
+              required: true, message: '请输入支付宝账号!',
+            }],
+            initialValue:user.zfb
+          }
+        ]"
+        />
+      </a-form-item>
+      <a-form-item v-bind="formItemLayout" label="性别" has-feedback>
+        <a-select
+          v-decorator="[
+          'sex',
+          {rules: [{ required: true, message: '请选择性别' }],
+          initialValue:user.sex
+          },
+           
+        ]"
+          placeholder="选择性别"
+        >
+          <a-select-option value="china">男</a-select-option>
+          <a-select-option value="usa">女</a-select-option>
+        </a-select>
+      </a-form-item>
+      <a-form-item v-bind="formItemLayout" label="等级" has-feedback>
+        <a-select
+          disabled
+          v-decorator="[
+          'level',
+          {rules: [{ required: true, message: '请选择等级' }],
+          initialValue:user.jurisdiction
+          }
+        ]"
+          placeholder="选择等级"
+        >
+          <a-select-option value="china">合伙人</a-select-option>
+          <a-select-option value="usa">团长</a-select-option>
+        </a-select>
+      </a-form-item>
+      <a-form-item v-bind="formItemLayout" label="支付宝名称">
+        <a-input
+          v-decorator="[
+          'zfbname',
+          {
+            rules: [ {
+              required: true, message: '请输入支付宝名称',
+            }],
+            initialValue:user.zfbname
+          }
+        ]"
+        />
+      </a-form-item>
+      <a-form-item v-bind="formItemLayout" label="推广位ID">
+        <a-input
+          v-decorator="[
+          'pid',
+          {
+            rules: [ {
+              required: true, message: '请输入推广位ID',
+            }],
+            initialValue:user.pid
+          }
+        ]"
+        />
+      </a-form-item>
+      <a-form-item v-bind="formItemLayout" label="合伙人编号">
+        <a-input
+          disabled
+          v-decorator="[
+          'usercode',
+          {
+            rules: [ {
+              required: true, message: '请输入合伙人编号',
+            }],
+             initialValue:user.usercode
+          }
+        ]"
+        />
+      </a-form-item>
+      <a-form-item v-bind="tailFormItemLayout">
+        <a-button type="primary" html-type="submit">保存</a-button>
+      </a-form-item>
+    </a-form>
+    <div class="title">
+      <a>我的上级</a>
     </div>
-    <a-button
-      v-if="data.type >1"
-      type="primary"
-      @click="showConfirm"
-    >{{bttilte}}</a-button>
+    <meber-form :memberdata="parentdata" :levelIsShow="false"/>
+    <div class="title">
+      <a>我的下级</a>
+    </div>
+    <meber-form :memberdata="childdata" :levelIsShow="true"/>
   </div>
 </template>
 <script>
-import { getusermessage, userupgradelevel } from "@/api/user";
-
+import { getusermessage, upuser, getparent, getchildren } from "@/api/user";
+import { mapGetters } from "vuex";
+import MeberForm from "@/components/common/meberform";
 export default {
   data() {
     return {
-      data: null,
-      bttilte: "升级为团长"
+      parentdata: [],
+      childdata: [],
+      confirmDirty: false,
+      autoCompleteResult: [],
+      user: null,
+      leveldisable: false,
+      formItemLayout: {
+        labelCol: {
+          xs: { span: 24 },
+          sm: { span: 4 }
+        },
+        wrapperCol: {
+          xs: { span: 24 },
+          sm: { span: 20 }
+        }
+      },
+      tailFormItemLayout: {
+        wrapperCol: {
+          xs: {
+            span: 24,
+            offset: 0
+          },
+          sm: {
+            span: 16,
+            offset: 8
+          }
+        }
+      }
     };
   },
-  computed: {},
+  components: {
+    MeberForm
+  },
+  computed: {
+    ...mapGetters(["jurisdiction"])
+  },
+  beforeCreate() {
+    this.form = this.$form.createForm(this);
+  },
   created() {
-    this.init();
+    console.log("用户信息详细查询");
+    let { phone, pid } = this.$route.query;
+    if (!phone) {
+      this.$message.error("没有查到相关用户信息");
+      return;
+    }
+    this.init(phone, pid);
   },
   methods: {
-    showConfirm() {
-      let that = this;
-      this.$confirm({
-        title: "提示",
-        content:
-          that.data.type == 3 ? "是否将该用户升级为团长" : "是否撤销该用户团长",
-        onOk() {
-          that.upgradelevel(that.data.phone, that.data.type);
-        },
-        onCancel() {}
+    init(phone, pid) {
+      Promise.all([
+        getusermessage({ phone }),
+        getparent({ pid }),
+        getchildren({ pid })
+      ]).then(res => {
+        this.user = res[0].data.data;
+        this.parentdata = res[1].data.data;
+        this.childdata = res[2].data.data;
+        console.log(this.parentdata, this.childdata);
       });
     },
-    init() {
-      let { phone } = this.$route.query;
-      console.log("用户", phone);
-      getusermessage({ phone }).then(res => {
-        this.data = res.data.data;
-        this.bttilte = this.data.type == 2 ? "撤销团长" : "升级团长";
-        console.log("shuju", this.data);
+    handleSubmit(e) {
+      e.preventDefault();
+      this.form.validateFieldsAndScroll((err, values) => {
+        if (!err) {
+          console.log("Received values of form: ", values);
+          upuser({ data: values }).then(res => {
+            let { data } = res;
+            console.log(data);
+            if (data.code == 200) {
+              this.$message.success(data.msg);
+            }
+          });
+        }
       });
-    },
-    upgradelevel(phone, type) {
-      type = type == 2 ? 3 : 2;
-
-      userupgradelevel({ phone, type }).then(res => {
-        this.data = res.data.data;
-        this.bttilte = this.data.type == 2 ? "撤销团长" : "升级团长";
-        this.$message.success(this.data.type == 2 ? "升级成功" : "撤销成功");
-        console.log("更新后的", this.data);
-      });
+    }
+  },
+  watch: {
+    $route(to, from) {
+      //监听路由是否变化
+      if (this.$route.query.phone) {
+        //判断id是否有值
+        //调数据
+        let { phone, pid } = this.$route.query;
+        this.init(phone, pid);
+      }
     }
   }
 };
 </script>
 <style lang="less" scoped>
-.content {
+.myform {
+  width: 60% !important;
   margin: 0 auto;
-  width: 500px !important;
-  //   text-align: center;
 }
-.txt {
-  margin-top: 20px;
-  font-size: 16px;
-  font-weight: 600;
-  // text-align: left;
+.title {
+  height: 40px;
+  width: 100% !important;
+  margin: 0 auto;
+  border-bottom: 1px solid #f8f8f8;
+  a {
+    position: relative;
+    color: #000;
+    font-size: 20px;
+    font-weight: 600;
+    &::after {
+      content: "";
+      position: absolute;
+      top: 5px;
+      right: -10px;
+      width: 6px;
+      height: 80%;
+      background: #1890ff;
+    }
+  }
 }
 </style>

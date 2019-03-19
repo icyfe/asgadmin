@@ -1,22 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Index from '@/components/index'
-// import MemberList from '@/components/view/member-list'
-// import Login from '@/components/login'
-// import UpCounpons from '@/components/view/upCounpons'
-// import Home from '@/components/view/home'
-// import OperatorDetail from '@/components/view/operator-detail'
-// import OperatorUser from '@/components/view/operator-user'
-// import OperatorItemDetail from '@/components/view/operator-itemdetail'
-// import additemid from '@/components/view/additemid'
-// import ChangePsw from '@/components/view/changepsw'
-// import User from '@/components/view/user'
-// import OrderList from '@/components/view/orderlist'
-// import Commission from '@/components/view/commission'
-// import MemberInformation from '@/components/view/member-information'
-// import CashDrawal from '@/components/view/cash-drawal'
-// import itemidnews from '@/components/view/itemidnews'
-// import additemidnews from '@/components/view/additemidnews'
 Vue.use(Router)
 // component: () => import('@/views/guide/index'),
 export default new Router({
@@ -80,8 +64,8 @@ export default new Router({
         }
         ,
         {
-          path: '/itemidnews',
-          component: () => import('@/components/view/itemidnews')
+          path: '/newslist',
+          component: () => import('@/components/view/newslist')
         },
         {
           path: '/additemidnews',
@@ -98,6 +82,14 @@ export default new Router({
         {
           path: '/registeroperator',
           component: () => import('@/components/view/registeroperator')
+        },
+        {
+          path: '/test',
+          component: () => import('@/components/view/test')
+        },
+        {
+          path: '/newsection',
+          component: () => import('@/components/view/newsection')
         }
       ]
     },

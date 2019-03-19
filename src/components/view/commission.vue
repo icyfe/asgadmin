@@ -78,7 +78,7 @@ export default {
   },
   methods: {
     init() {
-      if (this.jurisdiction != "superadmin") {
+      if (this.jurisdiction != "超级管理员") {
         this.disable = true;
       }
       getCommission().then(res => {

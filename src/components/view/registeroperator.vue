@@ -18,6 +18,15 @@
       <a-input :placeholder="OperatorCodeA" disabled/>
     </a-form-item>
     <a-form-item
+      label="姓名"
+      :labelCol="{ span: 5 }"
+      :wrapperCol="{ span: 12 }"
+      fieldDecoratorId="username"
+      :fieldDecoratorOptions="{rules: [{type:'string', required: true,message: '请输入姓名'  }]}"
+    >
+      <a-input/>
+    </a-form-item>
+    <a-form-item
       label="手机号码"
       :labelCol="{ span: 5 }"
       :wrapperCol="{ span: 12 }"
@@ -25,6 +34,24 @@
       :fieldDecoratorOptions="{rules: [{type:'string', required: true }]}"
     >
       <a-input id="phone"/>
+    </a-form-item>
+    <a-form-item
+      label="用户密码"
+      :labelCol="{ span: 5 }"
+      :wrapperCol="{ span: 12 }"
+      fieldDecoratorId="password"
+      :fieldDecoratorOptions="{rules: [{type:'string', required: true,message: '请输入密码'  }]}"
+    >
+      <a-input type="password" id="password"/>
+    </a-form-item>
+    <a-form-item
+      label="淘宝账号"
+      :labelCol="{ span: 5 }"
+      :wrapperCol="{ span: 12 }"
+      fieldDecoratorId="zfb"
+      :fieldDecoratorOptions="{rules: [{type:'string', required: true,message: '请输入淘宝账号'  }]}"
+    >
+      <a-input/>
     </a-form-item>
     <a-form-item
       label="有效时间"
@@ -69,23 +96,30 @@ export default {
     moment,
     fetch() {
       let count1 = 0;
+      let count2 = 0;
       let ret = voucherhistorySelect({ KeyCode: "operator" });
       ret.then(res => {
-        count1 = res.data.results[0].number + 1;
+        if (res.data.results[0].number1 == 90) {
+          count1 = res.data.results[0].number + 1;
+          count2 = 65;
+        } else {
+          count1 = res.data.results[0].number;
+          count2 = res.data.results[0].number1 + 1;
+        }
         this.OperatorCodeA =
-          String.fromCharCode(count1) + String.fromCharCode(count1);
+          String.fromCharCode(count1) + String.fromCharCode(count2);
         console.log("OperatorCodeA", this.OperatorCodeA);
       });
-       let ret1 = pidtable({});
+      let ret1 = pidtable({});
 
-          ret1.then(res => {
-            if (res.data.results.length > 0) {
-              this.pid = res.data.results[0].pid;
-            } else {
-              this.$message.info("没有可用的PID");
-              return;
-            }
-          });
+      ret1.then(res => {
+        if (res.data.results.length > 0) {
+          this.pid = res.data.results[0].pid;
+        } else {
+          this.$message.info("没有可用的PID");
+          return;
+        }
+      });
     },
     handleSubmit(e) {
       e.preventDefault();
@@ -94,13 +128,11 @@ export default {
           //console.log("Received values of form: ", values);
           values.OperatorCode = this.OperatorCodeA;
           values.EffectiveTime = this.date;
-         
 
           values.OperatorPID = this.pid;
-          if(this.pid=='')
-          {
-           this.$message.info("没有可用的PID");
-              return;
+          if (this.pid == "") {
+            this.$message.info("没有可用的PID");
+            return;
           }
           operatordetailInsert(values).then(res => {
             let data = res.data;

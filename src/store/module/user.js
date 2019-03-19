@@ -1,5 +1,6 @@
 import { postLogin } from '@/api/login'
 import { message } from 'ant-design-vue'
+import { getCashDrawlList } from "@/api/cashdrawal";
 const user = {
     state: {
         // user: '',
@@ -11,7 +12,9 @@ const user = {
         avatar: '',
         introduction: '',
         operatorcode: '',
-        jurisdiction: ''
+        jurisdiction: '',
+        txmessage: '',
+        play: true,
         // roles: [],
         // setting: {
         //   articlePlatform: []
@@ -52,6 +55,12 @@ const user = {
         },
         SET_JURISDICTION: (state, jurisdiction) => {
             state.jurisdiction = jurisdiction
+        },
+        SET_TXMESSAGE: (state, txmessage) => {
+            state.txmessage = txmessage
+        },
+        SET_PLAY: (state, play) => {
+            state.play = play
         }
         // SET_ROLES: (state, roles) => {
         //   state.roles = roles
@@ -71,6 +80,7 @@ const user = {
                     commit('SET_PHONE', user.phone);
                     commit('SET_OPERATORCODE', user.operatorcode)
                     commit('SET_JURISDICTION', user.jurisdiction)
+                    commit('SET_TXMESSAGE', user.txdata)
                     resolve(true)
                 } else {
                     resolve(false);
@@ -87,15 +97,22 @@ const user = {
                         resolve(data);
                     } else {
                         let { user } = data
-
-                        sessionStorage.setItem('user', JSON.stringify(user));
-                        console.log('user',user)
-                        commit('SET_NAME', user.name);
-                        commit('SET_AVATAR', user.avatar);
-                        commit('SET_PID', user.pid)
-                        commit('SET_PHONE', user.phone);
-                        commit('SET_OPERATORCODE', user.operatorcode)
-                        resolve(true)
+                        getCashDrawlList().then(res => {
+                            let txdata = res.data;
+                            if (txdata.code != 200) return this.$message.error("请求出错！");
+                            user.txdata = txdata.data.filter((item, index, list) => {
+                                return item.StautsType == "审核中";
+                            });
+                            sessionStorage.setItem('user', JSON.stringify(user));
+                            console.log('userasd', user)
+                            commit('SET_NAME', user.name);
+                            commit('SET_AVATAR', user.avatar);
+                            commit('SET_PID', user.pid)
+                            commit('SET_PHONE', user.phone);
+                            commit('SET_OPERATORCODE', user.operatorcode)
+                            commit('SET_TXMESSAGE', user.txdata)
+                            resolve(true)
+                        });
                     }
                 }).catch(error => {
                     reject(error)

@@ -11,39 +11,11 @@
       <!-- <template slot="name" slot-scope="name">
             {{name.first}} {{name.last}}
       </template>-->
-      <template
-        v-for="(col, index) in ['OperatorPID', 'OperatorName', 'OperatorCode','Phone','EffectiveTime']"
-        :slot="col"
-        slot-scope="text, record, index"
-      >
-        <div :key="index">
-          <a-input
-            v-if="record.editable"
-            style="margin: -5px 0"
-            :value="text"
-            @change="e => handleChange(e.target.value, record.key, col,index)"
-          />
-          <template v-else>{{text}}</template>
-        </div>
-      </template>
       <template slot="operation" slot-scope="text, record, index">
         <!-- <editable-cell :text="text" @change="onCellChange(record.key, 'operation')"/> -->
         <div class="editable-row-operations">
-          <span v-if="record.editable">
-            <a @click="() => save(record.key,index)">保存</a>
-            <a-popconfirm title="确定要取消?" @confirm="() => cancel(record.key)">
-              <a>取消</a>
-            </a-popconfirm>
-          </span>
-          <span v-else>
-            <span v-if="jurisdiction == 'superadmin'">
-              <a @click="() => edit(record.key)">修改</a>
-              <!-- <a @click="() => onDelete(record.key)">刪除</a> -->
-              <a-popconfirm title="确定要删除?" @confirm="() => onDelete(record.OperatorPID,index)">
-                <a>删除</a>
-              </a-popconfirm>
-            </span>
-            <a @click="jump('/operator-itemdetail',record.OperatorCode)">店铺详情</a>
+          <span>
+            <a @click="jump('/member-information',record)">查看详情</a>
           </span>
         </div>
       </template>
@@ -56,6 +28,18 @@
           />
         </div>
       </template>
+      <a
+        class="title"
+        slot="commissionmonth"
+        slot-scope="commissionmonth , record"
+        @click="jump('yysmyj',record)"
+      >{{commissionmonth}}</a>
+      <a
+        class="title"
+        slot="commissiontotal"
+        slot-scope="commissiontotal , record"
+        @click="jump('yyszyj',record)"
+      >{{commissiontotal}}</a>
     </a-table>
 
     <!-- <a-form-item :wrapperCol="{ span: 12, offset: 5 }">
@@ -66,34 +50,35 @@
 <script>
 import moment from "moment";
 const columns = [
-  // {
-  //   title: "运营商PID",
-  //   dataIndex: "OperatorPID",
-  //   sorter: true,
-  //   width: "20%"
-  //   // scopedSlots: { customRender: "OperatorPID" }
-  // },
   {
     title: "运营商名称",
-    dataIndex: "OperatorName",
-    width: "20%",
-    scopedSlots: { customRender: "OperatorName" }
+    dataIndex: "operatorname",
+    scopedSlots: { customRender: "operatorname" }
   },
   {
-    title: "运营商代号",
-    dataIndex: "OperatorCode"
+    title: "合伙人编号",
+    dataIndex: "usercode"
     //scopedSlots: { customRender: "OperatorCode" }
   },
   {
     title: "手机号码",
-    dataIndex: "Phone",
-    width: "20%",
-    scopedSlots: { customRender: "Phone" }
+    dataIndex: "phone",
+    scopedSlots: { customRender: "phone" }
+  },
+  {
+    title: "本月业绩",
+    dataIndex: "commissionmonth",
+    scopedSlots: { customRender: "commissionmonth" }
+  },
+  {
+    title: "总业绩",
+    dataIndex: "commissiontotal",
+    scopedSlots: { customRender: "commissiontotal" }
   },
   {
     title: "有效时间",
-    dataIndex: "EffectiveTime",
-    scopedSlots: { customRender: "EffectiveTime" }
+    dataIndex: "effectivetime",
+    scopedSlots: { customRender: "effectivetime" }
   },
   {
     title: "操作",
@@ -159,6 +144,7 @@ export default {
         this.data = res.data.results;
         this.data.forEach((item, index) => {
           item.key = index.toString();
+          item.effectivetime = item.effectivetime.slice(0, 10); //截取日期
         });
         this.cacheData = this.data.map(item => ({ ...item }));
         this.pagination = pagination;
@@ -172,52 +158,6 @@ export default {
         target[column] = value;
         this.data = newData;
       }
-    },
-    edit(key) {
-      const newData = [...this.data];
-      const target = newData.filter(item => key === item.key)[0];
-      if (target) {
-        target.editable = true;
-        this.data = newData;
-      }
-    },
-    save(key, index) {
-      const newData = [...this.data];
-      console.log("newData", newData[index]);
-      let ret = operatordetailUpdate(newData[index]);
-      ret.then(res => {
-        console.log("请求到的数据save", res);
-      });
-      const target = newData.filter(item => key === item.key)[index];
-      if (target) {
-        delete target.editable;
-        this.data = newData;
-        console.log("newData", newData[index].OperatorPID);
-        this.cacheData = newData.map(item => ({ ...item }));
-      }
-    },
-    cancel(key) {
-      const newData = [...this.data];
-      const target = newData.filter(item => key === item.key)[0];
-      if (target) {
-        Object.assign(
-          target,
-          this.cacheData.filter(item => key === item.key)[0]
-        );
-        delete target.editable;
-        this.data = newData;
-      }
-    },
-    onDelete(key, index) {
-      const newData = [...this.data];
-      console.log("key", key);
-      let ret = operatordetailDelete(newData[index]);
-      ret.then(res => {
-        //console.log("请求到的数据save", res);
-      });
-      const newData1 = newData.filter(item => item.OperatorPID !== key);
-      console.log("newData1", newData1);
-      this.data = newData.filter(item => item.OperatorPID !== key);
     },
     handleAdd() {
       const { data } = this;
@@ -258,34 +198,6 @@ export default {
           this.$message.info("没有可用的PID");
         }
       });
-      // ret1.then(res => {
-      //   return (count1 = res.data.results[0].number + 1);
-      // });
-      // ret.then(res => {
-      //   // console.log("请求到的数据", res.data.results[0].pid);
-      //   if (res.data.results.length > 0) {
-      //     pid = res.data.results[0].pid;
-      //     let OperatorCode1 =
-      //       String.fromCharCode(count1) + String.fromCharCode(count1);
-
-      //     const newData = {
-      //       OperatorPID: pid,
-      //       OperatorName: "",
-      //       OperatorCode: OperatorCode1,
-      //       editable: true
-      //     };
-      //     this.data = [...data, newData];
-
-      //     const newData1 = [...this.data];
-      //     const target = newData1.filter(item => count === item.key)[count];
-      //     if (target) {
-      //       target.editable = true;
-      //       this.data = newData1;
-      //     }
-      //   } else {
-      //     this.$message.info("没有可用的PID");
-      //   }
-      // });
     },
     onCellChange(key, dataIndex) {
       return value => {
@@ -300,13 +212,29 @@ export default {
     onChange(date, dateString) {
       console.log("date", dateString);
     },
-    jump(url, OperatorCode) {
-      this.$router.push({
-        path: url,
-        query: {
-          OperatorCode: OperatorCode
-        }
-      });
+    jump(type, params) {
+      if (type == "yysmyj") {
+        this.$router.push({
+          path: "/orderlist",
+          query: { code: params.usercode.slice(0, 2), type: "yysmyj" }
+        });
+      } else if (type == "yyszyj") {
+        this.$router.push({
+          path: "/orderlist",
+          query: { code: params.usercode.slice(0, 2), type: "yyszyj" }
+        });
+      } else {
+        this.$router.push({
+          path: "/member-information",
+          query: { phone: params.phone, pid: params.pid }
+        });
+      }
+      // this.$router.push({
+      //   path: url,
+      //   query: {
+      //     operatorCode: OperatorCode
+      //   }
+      // });
     }
   }
 };
@@ -314,6 +242,9 @@ export default {
 <style  scoped lang="less">
 .table {
   color: red !important;
+}
+.title {
+  cursor: pointer;
 }
 </style>
  

@@ -14,4 +14,5 @@ function upCommission(data) {
         data
     })
 }
+ 
 export { getCommission, upCommission }

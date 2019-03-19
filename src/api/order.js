@@ -32,5 +32,20 @@ function searchtotalOrder(data) {
         data
     })
 }
-
-export { getOrderList, searchOrder,searchmonthOrder ,searchtotalOrder}
+// 运营商月总业绩
+function getyysmonthorder(data) {
+    return request({
+        url: 'api/post/order/yysmonthorder',
+        method: 'post',
+        data
+    })
+}
+//运营商历史总业绩
+function getyysallorder(data) {
+    return request({
+        url: 'api/post/order/yysallorder',
+        method: 'post',
+        data
+    })
+}
+export { getOrderList, searchOrder, searchmonthOrder, searchtotalOrder, getyysmonthorder, getyysallorder }
